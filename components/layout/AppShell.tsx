@@ -96,7 +96,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
               display:'flex', alignItems:'center', justifyContent:'center',
               marginTop:-22,
               boxShadow:'0 4px 24px rgba(232,52,28,0.5)',
-              border:'3px solid var(--bg)',
+              outline:'3px solid var(--bg)',
               transition:'transform 0.15s, box-shadow 0.15s',
             }}
             onMouseEnter={e=>(e.currentTarget.style.transform='scale(1.08)')}
