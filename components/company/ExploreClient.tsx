@@ -1,0 +1,239 @@
+'use client'
+import { useState, useEffect, useRef } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
+import type { Company } from '@/types'
+import CompanyCard from './CompanyCard'
+import AddTipModal from '../tips/AddTipModal'
+import { useAuth } from '@/hooks/useAuth'
+import { useGeolocation } from '@/hooks/useGeolocation'
+
+interface Props { initialCompanies: Company[] }
+
+export default function ExploreClient({ initialCompanies }: Props) {
+  const router       = useRouter()
+  const params       = useSearchParams()
+  const { user }     = useAuth()
+  const { coords, fetch: fetchGeo } = useGeolocation()
+
+  const [query,     setQuery]     = useState('')
+  const [results,   setResults]   = useState<{ local: Company[]; google: any[] }>({ local: initialCompanies, google: [] })
+  const [searching, setSearching] = useState(false)
+  const [tipTarget, setTipTarget] = useState<Company | null>(null)
+  const debounceRef = useRef<NodeJS.Timeout>()
+
+  // Open tip modal if ?tip=1 (from bottom nav)
+  useEffect(() => {
+    if (params.get('tip') === '1' && initialCompanies.length > 0) {
+      setTipTarget(initialCompanies[0])
+    }
+  }, [])
+
+  useEffect(() => {
+    if (!query.trim()) {
+      setResults({ local: initialCompanies, google: [] })
+      return
+    }
+    clearTimeout(debounceRef.current)
+    debounceRef.current = setTimeout(async () => {
+      setSearching(true)
+      const url = new URL('/api/companies/search', window.location.origin)
+      url.searchParams.set('q', query)
+      if (coords) {
+        url.searchParams.set('lat', String(coords.lat))
+        url.searchParams.set('lng', String(coords.lng))
+      }
+      const res  = await fetch(url)
+      const data = await res.json()
+      setResults(data.data || { local: [], google: [] })
+      setSearching(false)
+    }, 350)
+  }, [query, coords])
+
+  const sorted  = [...results.local].sort((a, b) => b.score_total - a.score_total)
+  const best    = sorted.filter(c => c.score_total > 0).slice(0, 6)
+  const worst   = [...results.local].sort((a, b) => a.score_total - b.score_total).filter(c => c.score_total < 0).slice(0, 6)
+  const allTips = initialCompanies.flatMap(c => []).length  // placeholder
+
+  const totalGood = initialCompanies.reduce((s, c) => s + Math.max(0, c.score_total), 0)
+  const totalBad  = initialCompanies.reduce((s, c) => s + Math.max(0, -c.score_total), 0)
+
+  function handleCompanyClick(company: any) {
+    // If it's a Google result, add to DB first then navigate
+    if (company._source === 'google') {
+      fetch('/api/companies', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ google_place_id: company.google_place_id }),
+      })
+        .then(r => r.json())
+        .then(({ data }) => {
+          if (data?.id) router.push(`/company/${data.id}`)
+        })
+      return
+    }
+    router.push(`/company/${company.id}`)
+  }
+
+  return (
+    <div>
+      {/* Search bar */}
+      <div style={{ position:'relative', marginBottom:20 }}>
+        <input
+          value={query} onChange={e => setQuery(e.target.value)}
+          placeholder="Buscar empresas o lugares…"
+          style={{
+            width:'100%', padding:'12px 44px 12px 16px', borderRadius:14,
+            background:'var(--card)', border:'1px solid var(--border2)',
+            color:'var(--text)', fontSize:15, outline:'none',
+            fontFamily:'inherit',
+          }}
+        />
+        <button onClick={fetchGeo} title="Usar mi ubicación" style={{
+          position:'absolute', right:12, top:'50%', transform:'translateY(-50%)',
+          background:'none', border:'none', cursor:'pointer', color:'var(--muted)', fontSize:18,
+        }}>📍</button>
+        {searching && (
+          <div style={{ position:'absolute', right:44, top:'50%', transform:'translateY(-50%)' }}>
+            <div className="animate-spin" style={{ width:16, height:16, border:'2px solid var(--border2)', borderTopColor:'var(--red)', borderRadius:'50%' }}/>
+          </div>
+        )}
+      </div>
+
+      {/* Search results */}
+      {query.trim() ? (
+        <div>
+          {results.local.length > 0 && (
+            <div style={{ marginBottom:24 }}>
+              <SectionLabel>En Tiperous</SectionLabel>
+              {results.local.map((c, i) => (
+                <CompanyCard key={c.id} company={c} delay={i * 30} onClick={() => handleCompanyClick(c)} />
+              ))}
+            </div>
+          )}
+          {results.google.length > 0 && (
+            <div>
+              <SectionLabel>Desde Google Places <span style={{ color:'var(--muted)', fontWeight:400 }}>— click para agregar</span></SectionLabel>
+              {results.google.map((c, i) => (
+                <div key={c.id} onClick={() => handleCompanyClick(c)} style={{
+                  background:'var(--card)', borderRadius:16, padding:'14px 16px',
+                  marginBottom:10, cursor:'pointer', border:'1px solid var(--border)',
+                  display:'flex', alignItems:'center', gap:14,
+                  transition:'background 0.15s',
+                }}
+                  onMouseEnter={e => (e.currentTarget.style.background = 'var(--card2)')}
+                  onMouseLeave={e => (e.currentTarget.style.background = 'var(--card)')}
+                >
+                  <div style={{
+                    width:42, height:42, borderRadius:10, flexShrink:0,
+                    background:'linear-gradient(135deg,#333,#222)',
+                    display:'flex', alignItems:'center', justifyContent:'center',
+                    color:'var(--muted)', fontSize:18,
+                  }}>🔍</div>
+                  <div style={{ flex:1, minWidth:0 }}>
+                    <div style={{ fontFamily:'var(--font-display)', fontWeight:700, fontSize:15, color:'var(--text)' }}>{c.name}</div>
+                    <div style={{ color:'var(--muted)', fontSize:12, whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis' }}>{c.address}</div>
+                  </div>
+                  <span style={{ fontSize:11, color:'var(--muted)', background:'var(--surface)', padding:'4px 8px', borderRadius:99, whiteSpace:'nowrap' }}>
+                    + Agregar
+                  </span>
+                </div>
+              ))}
+            </div>
+          )}
+          {results.local.length === 0 && results.google.length === 0 && !searching && (
+            <div style={{ textAlign:'center', padding:'60px 0', color:'var(--muted)' }}>
+              No encontramos nada para "{query}"
+            </div>
+          )}
+        </div>
+      ) : (
+        <>
+          {/* Stats */}
+          <div style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:10, marginBottom:28 }}>
+            {[
+              { label:'Empresas',   val: initialCompanies.length, color:'var(--text)' },
+              { label:'Buenos Tips', val: totalGood,              color:'var(--green)' },
+              { label:'Malos Tips',  val: totalBad,               color:'var(--bad)' },
+            ].map(({ label, val, color }, i) => (
+              <div key={label} className="animate-fade-up" style={{
+                animationDelay:`${i * 60}ms`,
+                background:'var(--card)', borderRadius:14, padding:'16px 12px',
+                border:'1px solid var(--border)', textAlign:'center',
+              }}>
+                <div style={{ fontFamily:'var(--font-display)', fontWeight:900, fontSize:26, color }}>{val}</div>
+                <div style={{ color:'var(--muted)', fontSize:12, marginTop:2 }}>{label}</div>
+              </div>
+            ))}
+          </div>
+
+          {/* Best / Worst */}
+          {(best.length > 0 || worst.length > 0) && (
+            <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:14, marginBottom:28 }}>
+              <Column title="▲ Mejores" color="var(--green)" companies={best} onClick={handleCompanyClick} />
+              <Column title="▼ Peores"  color="var(--bad)"   companies={worst} onClick={handleCompanyClick} />
+            </div>
+          )}
+
+          {/* All */}
+          <SectionLabel>Todas las empresas</SectionLabel>
+          {sorted.map((c, i) => (
+            <CompanyCard key={c.id} company={c} rank={i + 1} delay={i * 25} onClick={() => handleCompanyClick(c)} />
+          ))}
+
+          {initialCompanies.length === 0 && (
+            <div style={{ textAlign:'center', padding:'60px 0', color:'var(--muted)' }}>
+              <div style={{ fontSize:40, marginBottom:12 }}>🏢</div>
+              <div style={{ fontSize:16, marginBottom:8 }}>Todavía no hay empresas.</div>
+              <div style={{ fontSize:14 }}>¡Buscá una y sé el primero en tipear!</div>
+            </div>
+          )}
+        </>
+      )}
+
+      {/* Tip modal */}
+      {tipTarget && (
+        <AddTipModal
+          company={tipTarget}
+          onClose={() => setTipTarget(null)}
+          onSuccess={() => setTipTarget(null)}
+        />
+      )}
+    </div>
+  )
+}
+
+function SectionLabel({ children }: { children: React.ReactNode }) {
+  return (
+    <div style={{ color:'var(--muted2)', fontWeight:700, fontSize:11, letterSpacing:1, marginBottom:12, textTransform:'uppercase' }}>
+      {children}
+    </div>
+  )
+}
+
+function Column({ title, color, companies, onClick }: { title:string; color:string; companies:Company[]; onClick:(c:Company)=>void }) {
+  return (
+    <div>
+      <div style={{ color, fontWeight:700, fontSize:12, letterSpacing:1, marginBottom:10 }}>{title}</div>
+      {companies.map((c, i) => (
+        <div key={c.id} onClick={() => onClick(c)} style={{
+          background:'var(--card)', borderRadius:13, padding:'11px 13px',
+          marginBottom:8, cursor:'pointer', border:'1px solid var(--border)',
+          borderTop:`2px solid ${color}`,
+          transition:'background 0.15s',
+        }}
+          onMouseEnter={e => (e.currentTarget.style.background = 'var(--card2)')}
+          onMouseLeave={e => (e.currentTarget.style.background = 'var(--card)')}
+        >
+          <div style={{ fontFamily:'var(--font-display)', fontWeight:900, fontSize:22, color, marginBottom:2 }}>
+            {c.score_total > 0 ? '+' : ''}{c.score_total}
+          </div>
+          <div style={{ color:'var(--muted)', fontSize:10, marginBottom:3 }}>Total score</div>
+          <div style={{ color:'var(--text)', fontFamily:'var(--font-display)', fontWeight:700, fontSize:13,
+            whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis' }}>
+            {i + 1}. {c.name}
+          </div>
+        </div>
+      ))}
+    </div>
+  )
+}
