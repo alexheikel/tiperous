@@ -7,7 +7,7 @@ export async function GET(req: NextRequest) {
   const limit      = parseInt(searchParams.get('limit')||'20')
   const supabase   = createClient()
   let query = supabase.from('tips')
-    .select('*, profile:profiles!tips_user_id_fkey(id, username, full_name, avatar_url)')
+    .select('*, profile:profiles(id, username, full_name, avatar_url)')
     .order('created_at', { ascending:false }).limit(limit)
   if (company_id) query = query.eq('company_id', company_id)
   const { data, error } = await query
@@ -28,7 +28,7 @@ export async function POST(req: NextRequest) {
   if (text.trim().length>140) return NextResponse.json({ error:'Máximo 140 caracteres.' }, { status:400 })
   const { data, error } = await supabase.from('tips')
     .insert({ company_id, user_id:user.id, type, segment, text:text.trim(), employee_name:employee_name||null, product_title:product_title||null, product_image:product_image||null, service_location:service_location||null })
-    .select('*, profile:profiles!tips_user_id_fkey(id, username, full_name, avatar_url)').single()
+    .select('*, profile:profiles(id, username, full_name, avatar_url)').single()
   if (error) {
     if (error.code==='23505') return NextResponse.json({ error:'Ya dejaste un tip similar hoy.' }, { status:409 })
     return NextResponse.json({ error:error.message }, { status:500 })
