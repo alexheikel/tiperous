@@ -15,6 +15,10 @@ export interface Profile {
   avatar_url: string | null
   bio:        string | null
   created_at: string
+  employee_name:    string | null
+  product_title:    string | null
+  product_image:    string | null
+  service_location: string | null
   updated_at: string
 }
 
@@ -51,6 +55,10 @@ export interface Tip {
   text:       string
   likes:      number
   created_at: string
+  employee_name:    string | null
+  product_title:    string | null
+  product_image:    string | null
+  service_location: string | null
   updated_at: string
   // Joined
   profile?:   Profile
@@ -62,6 +70,10 @@ export interface TipLike {
   tip_id:     string
   user_id:    string
   created_at: string
+  employee_name:    string | null
+  product_title:    string | null
+  product_image:    string | null
+  service_location: string | null
 }
 
 // ─── Google Places ───────────────────────────────────────────
