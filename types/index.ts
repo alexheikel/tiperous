@@ -14,6 +14,9 @@ export interface Profile {
   full_name:  string | null
   avatar_url: string | null
   bio:        string | null
+  followers_count: number | null
+  following_count: number | null
+  tips_count:      number | null
   created_at: string
   employee_name:    string | null
   product_title:    string | null
