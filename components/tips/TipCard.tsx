@@ -10,10 +10,7 @@ const SEG_ICON  = { service:'⚙', product:'◈', employee:'◎' }
 const SEG_LABEL = { service:'Servicio', product:'Producto', employee:'Empleado' }
 
 interface Comment {
-  id: string
-  tip_id: string
-  text: string
-  created_at: string
+  id: string; tip_id: string; text: string; created_at: string
   profile: { full_name:string|null; username:string|null } | null
 }
 
@@ -27,17 +24,20 @@ export default function TipCard({ tip, delay=0 }: { tip:Tip; delay?:number }) {
 
   const [showComments, setShowComments] = useState(false)
   const [comments,     setComments]     = useState<Comment[]>([])
-  const [loadingCmts,  setLoadingCmts]  = useState(false)
+  const [loaded,       setLoaded]       = useState(false)
   const [newComment,   setNewComment]   = useState('')
   const [posting,      setPosting]      = useState(false)
+  const [count,        setCount]        = useState((tip as any).comments_count || 0)
 
-  async function loadComments() {
+  async function toggleComments() {
     if (showComments) { setShowComments(false); return }
-    setLoadingCmts(true)
-    const res  = await fetch(`/api/comments?tip_id=${tip.id}`)
-    const data = await res.json()
-    setComments(data.data || [])
-    setLoadingCmts(false)
+    if (!loaded) {
+      const res  = await fetch(`/api/comments?tip_id=${tip.id}`)
+      const data = await res.json()
+      setComments(data.data || [])
+      setCount(data.data?.length || 0)
+      setLoaded(true)
+    }
     setShowComments(true)
   }
 
@@ -52,12 +52,11 @@ export default function TipCard({ tip, delay=0 }: { tip:Tip; delay?:number }) {
     const data = await res.json()
     if (data.data) {
       setComments(prev => [...prev, data.data])
+      setCount(prev => prev + 1)
       setNewComment('')
     }
     setPosting(false)
   }
-
-  const commentsCount = (tip as any).comments_count || 0
 
   return (
     <div className="animate-fade-up" style={{
@@ -99,30 +98,25 @@ export default function TipCard({ tip, delay=0 }: { tip:Tip; delay?:number }) {
       )}
 
       {/* Meta */}
-      {(tip as any).product_title && (
-        <div style={{ fontSize:12, color:'var(--muted2)', fontWeight:600, marginBottom:4 }}>◈ {(tip as any).product_title}</div>
-      )}
-      {(tip as any).employee_name && (
-        <div style={{ fontSize:12, color:'var(--muted2)', fontWeight:600, marginBottom:4 }}>◎ {(tip as any).employee_name}</div>
-      )}
-      {(tip as any).service_location && (
-        <div style={{ fontSize:11, color:'var(--muted)', marginBottom:4 }}>📍 {(tip as any).service_location}</div>
-      )}
+      {(tip as any).product_title && <div style={{ fontSize:12, color:'var(--muted2)', fontWeight:600, marginBottom:4 }}>◈ {(tip as any).product_title}</div>}
+      {(tip as any).employee_name && <div style={{ fontSize:12, color:'var(--muted2)', fontWeight:600, marginBottom:4 }}>◎ {(tip as any).employee_name}</div>}
+      {(tip as any).service_location && <div style={{ fontSize:11, color:'var(--muted)', marginBottom:4 }}>📍 {(tip as any).service_location}</div>}
 
       <p style={{ color:'var(--text)', fontSize:13, lineHeight:1.65, margin:'0 0 10px' }}>{tip.text}</p>
 
-      {/* Comments toggle */}
-      <button onClick={loadComments} style={{
-        background:'none', border:'none', cursor:'pointer',
-        color:'var(--muted)', fontSize:12, fontFamily:'inherit',
-        display:'flex', alignItems:'center', gap:5, padding:0,
-        transition:'color .15s',
-      }}
-        onMouseEnter={e=>(e.currentTarget.style.color='var(--text)')}
-        onMouseLeave={e=>(e.currentTarget.style.color='var(--muted)')}
-      >
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-        {loadingCmts ? 'Cargando…' : showComments ? 'Ocultar' : `${commentsCount > 0 ? commentsCount : ''} Comentar`}
+      {/* Comment bubble button */}
+      <button onClick={toggleComments} style={{
+        display:'inline-flex', alignItems:'center', gap:5,
+        padding:'4px 10px', borderRadius:99,
+        background: showComments ? 'rgba(232,52,28,0.12)' : 'var(--card2)',
+        border: `1px solid ${showComments ? 'rgba(232,52,28,0.25)' : 'var(--border)'}`,
+        color: showComments ? 'var(--red)' : 'var(--muted)',
+        fontFamily:'inherit', fontWeight:600, fontSize:11,
+        cursor:'pointer', transition:'all .15s',
+      }}>
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        {count > 0 ? count : ''} {count === 1 ? 'comentario' : 'comentarios'}
+        {count === 0 && !showComments && <span style={{ color:'var(--muted)', fontWeight:400 }}>— comentar</span>}
       </button>
 
       {/* Comments section */}
@@ -132,16 +126,16 @@ export default function TipCard({ tip, delay=0 }: { tip:Tip; delay?:number }) {
             <div style={{ color:'var(--muted)', fontSize:12, marginBottom:10 }}>Sé el primero en comentar.</div>
           )}
           {comments.map(c => (
-            <div key={c.id} style={{ display:'flex', gap:8, marginBottom:10 }}>
+            <div key={c.id} style={{ display:'flex', gap:8, marginBottom:8 }}>
               <div style={{
                 width:26, height:26, borderRadius:'50%', flexShrink:0,
-                background:'linear-gradient(135deg,#333,#222)',
+                background:'var(--card2)', border:'1px solid var(--border)',
                 display:'flex', alignItems:'center', justifyContent:'center',
                 color:'var(--muted2)', fontSize:11, fontWeight:700,
               }}>
                 {(c.profile?.full_name||c.profile?.username||'?')[0].toUpperCase()}
               </div>
-              <div style={{ flex:1, background:'var(--card2)', borderRadius:10, padding:'8px 10px' }}>
+              <div style={{ flex:1, background:'var(--card2)', borderRadius:10, padding:'7px 10px', border:'1px solid var(--border)' }}>
                 <div style={{ color:'var(--gold)', fontSize:11, fontWeight:700, marginBottom:2 }}>
                   {c.profile?.full_name||c.profile?.username||'Anónimo'}
                 </div>
@@ -150,7 +144,7 @@ export default function TipCard({ tip, delay=0 }: { tip:Tip; delay?:number }) {
             </div>
           ))}
 
-          {/* New comment input */}
+          {/* Input */}
           <div style={{ display:'flex', gap:8, marginTop:8 }}>
             <input
               value={newComment}
@@ -164,12 +158,12 @@ export default function TipCard({ tip, delay=0 }: { tip:Tip; delay?:number }) {
               }}
             />
             <button onClick={postComment} disabled={posting||!newComment.trim()} style={{
-              padding:'8px 14px', borderRadius:99,
+              width:34, height:34, borderRadius:'50%',
               background: newComment.trim() ? 'var(--red)' : 'var(--card2)',
               color: newComment.trim() ? '#fff' : 'var(--muted)',
               border:'none', cursor: newComment.trim() ? 'pointer' : 'default',
-              fontFamily:'inherit', fontWeight:700, fontSize:12,
-              transition:'all .15s', flexShrink:0,
+              fontWeight:700, fontSize:14, transition:'all .15s', flexShrink:0,
+              display:'flex', alignItems:'center', justifyContent:'center',
             }}>
               {posting ? '…' : '↑'}
             </button>
