@@ -58,7 +58,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
       }}>
         <NavBtn href="/"         active={pathname==='/'         } label="Explore"  icon={<SearchIcon  active={pathname==='/'         }/>} />
         <div style={{ flex:1, display:'flex', justifyContent:'center', alignItems:'center', flexDirection:'column', padding:'8px 0 12px' }}>
-          <button onClick={() => { if (!user) { router.push('/login'); return } router.push('/?tip=1') }} style={{
+          <button onClick={() => { if (!user) { router.push('/login'); return } router.push('/tip') }} style={{
             width:54, height:54, borderRadius:'50%',
             background:'linear-gradient(135deg,#e8341c,#a82010)',
             color:'#fff', fontSize:24, border:'3px solid var(--bg)', cursor:'pointer',
