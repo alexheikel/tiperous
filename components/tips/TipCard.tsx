@@ -52,7 +52,7 @@ export default function TipCard({ tip, delay=0 }: { tip:Tip; delay?:number }) {
     const data = await res.json()
     if (data.data) {
       setComments(prev => [...prev, data.data])
-      setCount(prev => prev + 1)
+      setCount((prev: number) => prev + 1)
       setNewComment('')
     }
     setPosting(false)
