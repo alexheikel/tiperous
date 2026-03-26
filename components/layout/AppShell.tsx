@@ -1,6 +1,7 @@
 'use client'
 import { usePathname, useRouter } from 'next/navigation'
 import Link from 'next/link'
+import Image from 'next/image'
 import { useAuth } from '@/hooks/useAuth'
 
 export default function AppShell({ children }: { children: React.ReactNode }) {
@@ -13,23 +14,14 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
     <div style={{ minHeight:'100dvh', background:'var(--bg)', maxWidth:600, margin:'0 auto', position:'relative' }}>
       <div className="grain-overlay" aria-hidden />
 
-      {/* Header */}
       <header style={{
         position:'sticky', top:0, zIndex:100,
         background:'rgba(12,12,14,0.94)', backdropFilter:'blur(24px)',
         borderBottom:'1px solid var(--border)',
       }}>
-        <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', padding:'12px 18px' }}>
-          <Link href="/" style={{ display:'flex', alignItems:'center', gap:10, textDecoration:'none' }}>
-            <div style={{
-              width:34, height:34, borderRadius:10,
-              background:'linear-gradient(135deg,#e8341c,#a82010)',
-              display:'flex', alignItems:'center', justifyContent:'center',
-              fontSize:18, boxShadow:'0 3px 12px rgba(232,52,28,0.45)',
-            }}>★</div>
-            <span style={{ fontFamily:'Playfair Display, Georgia, serif', fontWeight:900, fontSize:22, color:'#f0f0f2', letterSpacing:'-.5px' }}>
-              Tiperous
-            </span>
+        <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', padding:'10px 18px' }}>
+          <Link href="/" style={{ display:'flex', alignItems:'center', textDecoration:'none' }}>
+            <img src="/logo.svg" alt="Tiperous" style={{ height:38, width:'auto' }} />
           </Link>
           <div style={{ display:'flex', alignItems:'center', gap:10 }}>
             {user ? (
@@ -37,7 +29,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
                 width:36, height:36, borderRadius:'50%',
                 background:'linear-gradient(135deg,#c0392b,#8e0000)',
                 display:'flex', alignItems:'center', justifyContent:'center',
-                color:'#fff', fontFamily:'Playfair Display, serif', fontWeight:700, fontSize:15,
+                color:'#fff', fontFamily:'Playfair Display,serif', fontWeight:700, fontSize:15,
                 textDecoration:'none', flexShrink:0,
                 boxShadow:'0 2px 10px rgba(192,57,43,0.3)',
                 border: pathname==='/profile' ? '2px solid var(--red)' : '2px solid transparent',
@@ -48,7 +40,6 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
                 background:'linear-gradient(135deg,#e8341c,#a82010)',
                 color:'#fff', fontWeight:700, fontSize:13,
                 textDecoration:'none', boxShadow:'0 2px 10px rgba(232,52,28,0.3)',
-                letterSpacing:'.2px',
               }}>Ingresar</Link>
             )}
           </div>
@@ -57,7 +48,6 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
 
       <main style={{ padding:'20px 18px 100px' }}>{children}</main>
 
-      {/* Bottom nav */}
       <nav style={{
         position:'fixed', bottom:0,
         left:'50%', transform:'translateX(-50%)',
@@ -98,10 +88,9 @@ function NavBtn({ href, active, label, icon }: { href:string; active:boolean; la
     </Link>
   )
 }
-
-function SearchIcon({ active }: { active: boolean }) {
+function SearchIcon({ active }: { active:boolean }) {
   return <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={active?2.5:2} strokeLinecap="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
 }
-function ClockIcon({ active }: { active: boolean }) {
+function ClockIcon({ active }: { active:boolean }) {
   return <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={active?2.5:2} strokeLinecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
 }

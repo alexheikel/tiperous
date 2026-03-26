@@ -18,6 +18,7 @@ export default function ExploreClient({ initialCompanies }: Props) {
   const [results,   setResults]   = useState<{ local:Company[]; google:any[] }>({ local:initialCompanies, google:[] })
   const [searching, setSearching] = useState(false)
   const [tipTarget, setTipTarget] = useState<Company|null>(null)
+  const [sortChrono, setSortChrono] = useState(false)
   const debounceRef = useRef<NodeJS.Timeout>()
 
   useEffect(() => {
@@ -39,7 +40,10 @@ export default function ExploreClient({ initialCompanies }: Props) {
     }, 350)
   }, [query, coords])
 
-  const sorted = [...results.local].sort((a,b)=>b.score_total-a.score_total)
+  const sorted = sortChrono
+    ? [...results.local].sort((a,b)=>new Date(b.created_at).getTime()-new Date(a.created_at).getTime())
+    : [...results.local].sort((a,b)=>b.score_total-a.score_total)
+
   const best   = sorted.filter(c=>c.score_total>0).slice(0,6)
   const worst  = [...results.local].sort((a,b)=>a.score_total-b.score_total).filter(c=>c.score_total<0).slice(0,6)
 
@@ -54,7 +58,8 @@ export default function ExploreClient({ initialCompanies }: Props) {
 
   return (
     <div>
-      <div style={{ position:'relative', marginBottom:20 }}>
+      {/* Search bar */}
+      <div style={{ position:'relative', marginBottom:16 }}>
         <input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Buscar empresas o lugares…"
           style={{ width:'100%',padding:'12px 44px 12px 16px',borderRadius:14,background:'var(--card)',border:'1px solid var(--border2)',color:'var(--text)',fontSize:15,outline:'none',fontFamily:'inherit' }}/>
         <button onClick={fetchGeo} title="Usar mi ubicación" style={{ position:'absolute',right:12,top:'50%',transform:'translateY(-50%)',background:'none',border:'none',cursor:'pointer',color:'var(--muted)',fontSize:18 }}>📍</button>
@@ -65,57 +70,85 @@ export default function ExploreClient({ initialCompanies }: Props) {
 
       {query.trim() ? (
         <div>
-          {results.local.length>0 && <div style={{ marginBottom:24 }}>
+          {results.local.length>0 && <div style={{ marginBottom:20 }}>
             <SLabel>En Tiperous</SLabel>
             {results.local.map((c,i) => <CompanyCard key={c.id} company={c} delay={i*30} onClick={()=>handleCompanyClick(c)}/>)}
           </div>}
           {results.google.length>0 && <div>
-            <SLabel>Desde Google Places <span style={{ color:'var(--muted)',fontWeight:400 }}>— click para agregar</span></SLabel>
-            {results.google.map((c) => (
+            <SLabel>Google Places <span style={{ color:'var(--muted)',fontWeight:400 }}>— click para agregar</span></SLabel>
+            {results.google.map(c => (
               <div key={c.id} onClick={()=>handleCompanyClick(c)} style={{ background:'var(--card)',borderRadius:16,padding:'14px 16px',marginBottom:10,cursor:'pointer',border:'1px solid var(--border)',display:'flex',alignItems:'center',gap:14,transition:'background .15s' }}
                 onMouseEnter={e=>(e.currentTarget.style.background='var(--card2)')}
                 onMouseLeave={e=>(e.currentTarget.style.background='var(--card)')}>
-                <div style={{ width:42,height:42,borderRadius:10,flexShrink:0,background:'linear-gradient(135deg,#333,#222)',display:'flex',alignItems:'center',justifyContent:'center',color:'var(--muted)',fontSize:18 }}>🔍</div>
+                <div style={{ width:42,height:42,borderRadius:10,flexShrink:0,background:'#222',display:'flex',alignItems:'center',justifyContent:'center',fontSize:18 }}>🔍</div>
                 <div style={{ flex:1,minWidth:0 }}>
-                  <div style={{ fontFamily:'Playfair Display,serif',fontWeight:700,fontSize:15,color:'var(--text)' }}>{c.name}</div>
-                  <div style={{ color:'var(--muted)',fontSize:12,whiteSpace:'nowrap',overflow:'hidden',textOverflow:'ellipsis' }}>{c.address}</div>
+                  <div style={{ fontFamily:'Playfair Display,serif',fontWeight:700,fontSize:15 }}>{c.name}</div>
+                  <div style={{ color:'var(--muted)',fontSize:12,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap' }}>{c.address}</div>
                 </div>
-                <span style={{ fontSize:11,color:'var(--muted)',background:'var(--surface)',padding:'4px 8px',borderRadius:99,whiteSpace:'nowrap' }}>+ Agregar</span>
+                <span style={{ fontSize:11,color:'var(--muted)',background:'var(--surface)',padding:'4px 8px',borderRadius:99 }}>+ Agregar</span>
               </div>
             ))}
           </div>}
-          {results.local.length===0&&results.google.length===0&&!searching && (
-            <div style={{ textAlign:'center',padding:'60px 0',color:'var(--muted)' }}>No encontramos nada para "{query}"</div>
+          {!results.local.length&&!results.google.length&&!searching&&(
+            <div style={{ textAlign:'center',padding:'60px 0',color:'var(--muted)' }}>No encontramos "{query}"</div>
           )}
         </div>
       ) : (
         <>
-          <div style={{ display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:10,marginBottom:28 }}>
+          {/* Stats */}
+          <div style={{ display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:10,marginBottom:20 }}>
             {[
-              { label:'Empresas',    val:initialCompanies.length, color:'var(--text)' },
-              { label:'Buenos Tips', val:initialCompanies.reduce((s,c)=>s+Math.max(0,c.score_total),0), color:'var(--green)' },
+              { label:'Empresas',    val:initialCompanies.length,                                         color:'var(--text)' },
+              { label:'Buenos Tips', val:initialCompanies.reduce((s,c)=>s+Math.max(0,c.score_total),0),  color:'var(--green)' },
               { label:'Malos Tips',  val:initialCompanies.reduce((s,c)=>s+Math.max(0,-c.score_total),0), color:'var(--bad)' },
             ].map(({label,val,color},i) => (
-              <div key={label} className="animate-fade-up" style={{ animationDelay:`${i*60}ms`,background:'var(--card)',borderRadius:14,padding:'16px 12px',border:'1px solid var(--border)',textAlign:'center' }}>
-                <div style={{ fontFamily:'Playfair Display,serif',fontWeight:900,fontSize:26,color }}>{val}</div>
-                <div style={{ color:'var(--muted)',fontSize:12,marginTop:2 }}>{label}</div>
+              <div key={label} className="animate-fade-up" style={{ animationDelay:`${i*60}ms`,background:'var(--card)',borderRadius:14,padding:'14px 10px',border:'1px solid var(--border)',textAlign:'center' }}>
+                <div style={{ fontFamily:'Playfair Display,serif',fontWeight:900,fontSize:24,color }}>{val}</div>
+                <div style={{ color:'var(--muted)',fontSize:11,marginTop:2 }}>{label}</div>
               </div>
             ))}
           </div>
 
-          {(best.length>0||worst.length>0) && (
-            <div style={{ display:'grid',gridTemplateColumns:'1fr 1fr',gap:14,marginBottom:28 }}>
-              <Column title="▲ Mejores" color="var(--green)" companies={best}   onClick={handleCompanyClick}/>
-              <Column title="▼ Peores"  color="var(--bad)"   companies={worst}  onClick={handleCompanyClick}/>
+          {/* Sort toggle */}
+          <div style={{ display:'flex', justifyContent:'flex-end', marginBottom:12 }}>
+            <button onClick={()=>setSortChrono(!sortChrono)} style={{
+              padding:'5px 12px', borderRadius:99,
+              background: sortChrono ? 'var(--red)' : 'var(--card)',
+              border:'1px solid var(--border2)',
+              color: sortChrono ? '#fff' : 'var(--muted2)',
+              fontFamily:'inherit', fontWeight:600, fontSize:12, cursor:'pointer',
+              transition:'all .15s',
+            }}>
+              {sortChrono ? '🕐 Más recientes' : '⭐ Mejor score'}
+            </button>
+          </div>
+
+          {/* Best / Worst columns — each with independent scroll */}
+          {!sortChrono && (best.length>0||worst.length>0) && (
+            <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:14, marginBottom:20 }}>
+              <div style={{ display:'flex', flexDirection:'column' }}>
+                <SLabel color="var(--green)">▲ Mejores</SLabel>
+                <div style={{ overflowY:'auto', maxHeight:360, paddingRight:4 }}>
+                  {best.map((c,i) => <ScoreCol key={c.id} c={c} i={i} color="var(--green)" onClick={()=>handleCompanyClick(c)}/>)}
+                </div>
+              </div>
+              <div style={{ display:'flex', flexDirection:'column' }}>
+                <SLabel color="var(--bad)">▼ Peores</SLabel>
+                <div style={{ overflowY:'auto', maxHeight:360, paddingRight:4 }}>
+                  {worst.map((c,i) => <ScoreCol key={c.id} c={c} i={i} color="var(--bad)" onClick={()=>handleCompanyClick(c)}/>)}
+                </div>
+              </div>
             </div>
           )}
 
+          {/* All companies */}
           <SLabel>Todas las empresas</SLabel>
-          {sorted.map((c,i) => <CompanyCard key={c.id} company={c} rank={i+1} delay={i*25} onClick={()=>handleCompanyClick(c)}/>)}
+          {sorted.map((c,i) => <CompanyCard key={c.id} company={c} rank={i+1} delay={i*20} onClick={()=>handleCompanyClick(c)}/>)}
+
           {initialCompanies.length===0 && (
             <div style={{ textAlign:'center',padding:'60px 0',color:'var(--muted)' }}>
               <div style={{ fontSize:40,marginBottom:12 }}>🏢</div>
-              <div style={{ fontSize:16,marginBottom:8 }}>Todavía no hay empresas.</div>
+              <div style={{ fontSize:16,marginBottom:8 }}>No hay empresas todavía.</div>
               <div style={{ fontSize:14 }}>¡Buscá una y sé el primero en tipear!</div>
             </div>
           )}
@@ -127,23 +160,18 @@ export default function ExploreClient({ initialCompanies }: Props) {
   )
 }
 
-function SLabel({ children }: { children: React.ReactNode }) {
-  return <div style={{ color:'var(--muted2)',fontWeight:700,fontSize:11,letterSpacing:1,marginBottom:12,textTransform:'uppercase' }}>{children}</div>
+function SLabel({ children, color }: { children:React.ReactNode; color?:string }) {
+  return <div style={{ color:color||'var(--muted2)',fontWeight:700,fontSize:11,letterSpacing:1,marginBottom:10,textTransform:'uppercase' }}>{children}</div>
 }
 
-function Column({ title,color,companies,onClick }: { title:string;color:string;companies:Company[];onClick:(c:Company)=>void }) {
+function ScoreCol({ c, i, color, onClick }: { c:Company; i:number; color:string; onClick:()=>void }) {
   return (
-    <div>
-      <div style={{ color,fontWeight:700,fontSize:12,letterSpacing:1,marginBottom:10 }}>{title}</div>
-      {companies.map((c,i) => (
-        <div key={c.id} onClick={()=>onClick(c)} style={{ background:'var(--card)',borderRadius:13,padding:'11px 13px',marginBottom:8,cursor:'pointer',border:'1px solid var(--border)',borderTop:`2px solid ${color}`,transition:'background .15s' }}
-          onMouseEnter={e=>(e.currentTarget.style.background='var(--card2)')}
-          onMouseLeave={e=>(e.currentTarget.style.background='var(--card)')}>
-          <div style={{ fontFamily:'Playfair Display,serif',fontWeight:900,fontSize:22,color,marginBottom:2 }}>{c.score_total>0?'+':''}{c.score_total}</div>
-          <div style={{ color:'var(--muted)',fontSize:10,marginBottom:2 }}>Total score</div>
-          <div style={{ color:'var(--text)',fontFamily:'Playfair Display,serif',fontWeight:700,fontSize:13,whiteSpace:'nowrap',overflow:'hidden',textOverflow:'ellipsis' }}>{i+1}. {c.name}</div>
-        </div>
-      ))}
+    <div onClick={onClick} style={{ background:'var(--card)',borderRadius:13,padding:'10px 12px',marginBottom:8,cursor:'pointer',border:'1px solid var(--border)',borderTop:`2px solid ${color}`,transition:'background .15s' }}
+      onMouseEnter={e=>(e.currentTarget.style.background='var(--card2)')}
+      onMouseLeave={e=>(e.currentTarget.style.background='var(--card)')}>
+      <div style={{ fontFamily:'Playfair Display,serif',fontWeight:900,fontSize:20,color }}>{c.score_total>0?'+':''}{c.score_total}</div>
+      <div style={{ color:'var(--muted)',fontSize:10,marginBottom:2 }}>Total score</div>
+      <div style={{ color:'var(--text)',fontFamily:'Playfair Display,serif',fontWeight:700,fontSize:13,whiteSpace:'nowrap',overflow:'hidden',textOverflow:'ellipsis' }}>{i+1}. {c.name}</div>
     </div>
   )
 }

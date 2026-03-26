@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 160" fill="none">
+  <rect x="30" y="8" width="140" height="95" rx="22" fill="#e8341c"/>
+  <polygon points="60,100 85,100 72,120" fill="#e8341c"/>
+  <polygon points="100,28 106,46 125,46 111,57 116,75 100,64 84,75 89,57 75,46 94,46" fill="white"/>
+  <text x="100" y="148" font-family="Georgia,'Times New Roman',serif" font-style="italic" font-weight="700" font-size="38" fill="#e8341c" text-anchor="middle" letter-spacing="-1">Tiperous.</text>
+</svg>

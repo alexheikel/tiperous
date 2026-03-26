@@ -8,6 +8,17 @@ const dmSans   = DM_Sans({ subsets:['latin'], variable:'--font-body', weight:['3
 export const metadata: Metadata = {
   title: 'Tiperous — Rate companies, share real experiences',
   description: 'Simple way to rate service, products and employees at any company.',
+  icons: {
+    icon: '/favicon.svg',
+    shortcut: '/favicon.svg',
+    apple: '/favicon.svg',
+  },
+  openGraph: {
+    title: 'Tiperous',
+    description: 'Rate companies. Share real experiences.',
+    type: 'website',
+    url: 'https://tipero.us',
+  },
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

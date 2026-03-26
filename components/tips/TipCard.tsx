@@ -19,20 +19,21 @@ export default function TipCard({ tip, delay=0 }: { tip:Tip; delay?:number }) {
       border:'1px solid var(--border)',
       borderLeft:`3px solid ${good?'var(--green)':'var(--bad)'}`,
     }}>
+      {/* Header */}
       <div style={{ display:'flex', alignItems:'center', gap:9, marginBottom:8 }}>
         <div style={{
-          width:32, height:32, borderRadius:'50%', flexShrink:0,
+          width:30, height:30, borderRadius:'50%', flexShrink:0,
           background:'linear-gradient(135deg,#c0392b,#8e0000)',
           display:'flex', alignItems:'center', justifyContent:'center',
-          color:'#fff', fontWeight:700, fontSize:13,
+          color:'#fff', fontWeight:700, fontSize:12,
         }}>{name[0].toUpperCase()}</div>
         <div style={{ flex:1, minWidth:0 }}>
-          <div style={{ color:'var(--gold)', fontWeight:700, fontSize:13,
+          <div style={{ color:'var(--gold)', fontWeight:700, fontSize:12,
             whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis' }}>{name}</div>
-          <div style={{ color:'var(--muted)', fontSize:11 }}>{ago}</div>
+          <div style={{ color:'var(--muted)', fontSize:10 }}>{ago}</div>
         </div>
         <div style={{
-          display:'flex', alignItems:'center', gap:4, padding:'3px 9px', borderRadius:99,
+          display:'flex', alignItems:'center', gap:4, padding:'3px 8px', borderRadius:99,
           background:good?'var(--green-dim)':'var(--bad-dim)',
           border:`1px solid ${good?'rgba(29,185,84,0.2)':'rgba(232,52,28,0.2)'}`,
           flexShrink:0,
@@ -43,6 +44,31 @@ export default function TipCard({ tip, delay=0 }: { tip:Tip; delay?:number }) {
           </span>
         </div>
       </div>
+
+      {/* Product image */}
+      {tip.product_image && (
+        <img src={tip.product_image} alt={tip.product_title||'Producto'}
+          style={{ width:'100%', borderRadius:10, marginBottom:8, maxHeight:160, objectFit:'cover' }}
+        />
+      )}
+
+      {/* Product/employee/service meta */}
+      {tip.product_title && (
+        <div style={{ fontSize:12, color:'var(--muted2)', fontWeight:600, marginBottom:4 }}>
+          ◈ {tip.product_title}
+        </div>
+      )}
+      {tip.employee_name && (
+        <div style={{ fontSize:12, color:'var(--muted2)', fontWeight:600, marginBottom:4 }}>
+          ◎ {tip.employee_name}
+        </div>
+      )}
+      {tip.service_location && (
+        <div style={{ fontSize:11, color:'var(--muted)', marginBottom:4 }}>
+          📍 {tip.service_location}
+        </div>
+      )}
+
       <p style={{ color:'var(--text)', fontSize:13, lineHeight:1.65, margin:0 }}>{tip.text}</p>
     </div>
   )

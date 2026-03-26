@@ -9,6 +9,7 @@ const SEGS: { id:TipSegment; label:string; icon:string }[] = [
   { id:'product',  label:'Producto',  icon:'◈' },
   { id:'employee', label:'Empleados', icon:'◎' },
 ]
+const MAX = 140
 
 interface Props { company:Company; onClose:()=>void; onSuccess:()=>void }
 
@@ -21,6 +22,13 @@ export default function AddTipModal({ company, onClose, onSuccess }: Props) {
   const [error,     setError]     = useState('')
   const [loading,   setLoading]   = useState(false)
   const [submitted, setSubmitted] = useState(false)
+  // Extra fields
+  const [empName,   setEmpName]   = useState('')   // employee name
+  const [prodTitle, setProdTitle] = useState('')   // product title
+  const [prodImg,   setProdImg]   = useState<File|null>(null)
+  const [prodImgPreview, setProdImgPreview] = useState('')
+  const [location,  setLocation]  = useState('')   // service location/url
+  const [uploading, setUploading] = useState(false)
 
   if (!user) return (
     <Overlay onClose={onClose}>
@@ -45,14 +53,53 @@ export default function AddTipModal({ company, onClose, onSuccess }: Props) {
     </Overlay>
   )
 
+  function handleImgChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    if (!file) return
+    setProdImg(file)
+    setProdImgPreview(URL.createObjectURL(file))
+  }
+
+  async function uploadImage(file: File): Promise<string|null> {
+    const formData = new FormData()
+    formData.append('file', file)
+    const res  = await fetch('/api/upload', { method:'POST', body:formData })
+    const data = await res.json()
+    return data.url || null
+  }
+
   async function handleSubmit() {
-    if (text.trim().length<3) { setError('El tip debe tener al menos 3 caracteres.'); return }
+    if (text.trim().length < 3) { setError('El tip debe tener al menos 3 caracteres.'); return }
+    if (text.trim().length > MAX) { setError(`Máximo ${MAX} caracteres.`); return }
+    if (seg==='employee' && !empName.trim()) { setError('Ingresá el nombre del empleado.'); return }
+    if (seg==='service' && !location.trim()) { setError('Ingresá la ubicación o URL del servicio.'); return }
+
     setLoading(true); setError('')
-    const res  = await fetch('/api/tips', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ company_id:company.id, type, segment:seg, text:text.trim() }) })
+
+    let prodImgUrl: string|null = null
+    if (seg==='product' && prodImg) {
+      setUploading(true)
+      prodImgUrl = await uploadImage(prodImg)
+      setUploading(false)
+    }
+
+    const res = await fetch('/api/tips', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        company_id: company.id, type, segment:seg, text:text.trim(),
+        employee_name: seg==='employee' ? empName.trim() : null,
+        product_title: seg==='product'  ? prodTitle.trim()||null : null,
+        product_image: seg==='product'  ? prodImgUrl : null,
+        service_location: seg==='service' ? location.trim() : null,
+      }),
+    })
     const data = await res.json()
     if (!res.ok) { setError(data.error||'Error al enviar.'); setLoading(false); return }
     setSubmitted(true); setLoading(false)
   }
+
+  const charsLeft = MAX - text.length
+  const charsColor = charsLeft < 20 ? 'var(--bad)' : charsLeft < 40 ? 'var(--gold)' : 'var(--muted)'
 
   return (
     <Overlay onClose={onClose}>
@@ -60,9 +107,11 @@ export default function AddTipModal({ company, onClose, onSuccess }: Props) {
         <button onClick={onClose} style={{ background:'none',border:'none',color:'var(--muted2)',fontFamily:'inherit',fontSize:14,cursor:'pointer' }}>✕ Cerrar</button>
         <span style={{ fontFamily:'Playfair Display,serif',fontWeight:700,fontSize:17 }}>{company.name}</span>
         <button onClick={handleSubmit} disabled={loading||text.trim().length<3} style={{ background:'none',border:'none',fontFamily:'inherit',color:text.trim().length>=3?'var(--green)':'var(--muted)',fontWeight:700,fontSize:14,cursor:text.trim().length>=3?'pointer':'default',transition:'color .15s' }}>
-          {loading?'…':'Enviar ✓'}
+          {loading?(uploading?'Subiendo…':'Enviando…'):'Enviar ✓'}
         </button>
       </div>
+
+      {/* Segment tabs */}
       <div style={{ display:'flex',background:'var(--bg)',borderRadius:12,padding:4,gap:4,marginBottom:16 }}>
         {SEGS.map(s => (
           <button key={s.id} onClick={()=>setSeg(s.id)} style={{ flex:1,padding:'9px 0',borderRadius:9,border:'none',cursor:'pointer',background:seg===s.id?'var(--card2)':'transparent',color:seg===s.id?'var(--text)':'var(--muted)',fontFamily:'inherit',fontWeight:600,fontSize:12,transition:'all .15s',display:'flex',alignItems:'center',justifyContent:'center',gap:5 }}>
@@ -70,14 +119,66 @@ export default function AddTipModal({ company, onClose, onSuccess }: Props) {
           </button>
         ))}
       </div>
-      <textarea value={text} onChange={e=>setText(e.target.value)} placeholder={`Contá tu experiencia con ${SEGS.find(s=>s.id===seg)?.label.toLowerCase()} de ${company.name}…`} rows={4} maxLength={500}
-        style={{ width:'100%',padding:'12px 14px',borderRadius:12,background:'var(--card)',border:'1px solid var(--border2)',color:'var(--text)',fontSize:14,resize:'none',marginBottom:6,lineHeight:1.6,fontFamily:'inherit',outline:'none' }}/>
-      <div style={{ textAlign:'right',color:'var(--muted)',fontSize:11,marginBottom:14 }}>{text.length}/500</div>
+
+      {/* Extra field — Employee name */}
+      {seg==='employee' && (
+        <input value={empName} onChange={e=>setEmpName(e.target.value)}
+          placeholder="Nombre del empleado *"
+          style={{ ...inputStyle, marginBottom:10 }}
+        />
+      )}
+
+      {/* Extra fields — Product title + image */}
+      {seg==='product' && (
+        <div style={{ marginBottom:10 }}>
+          <input value={prodTitle} onChange={e=>setProdTitle(e.target.value)}
+            placeholder="Nombre del producto (opcional)"
+            style={{ ...inputStyle, marginBottom:8 }}
+          />
+          <label style={{
+            display:'flex', alignItems:'center', gap:10, padding:'10px 14px',
+            borderRadius:12, background:'var(--card)', border:'1px solid var(--border2)',
+            cursor:'pointer', color:'var(--muted)', fontSize:13,
+          }}>
+            {prodImgPreview ? (
+              <img src={prodImgPreview} alt="" style={{ width:44,height:44,borderRadius:8,objectFit:'cover' }}/>
+            ) : (
+              <div style={{ width:44,height:44,borderRadius:8,background:'var(--card2)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:20 }}>📷</div>
+            )}
+            <span>{prodImgPreview ? 'Cambiar imagen' : 'Agregar imagen del producto'}</span>
+            <input type="file" accept="image/*" onChange={handleImgChange} style={{ display:'none' }}/>
+          </label>
+        </div>
+      )}
+
+      {/* Extra field — Service location/url */}
+      {seg==='service' && (
+        <input value={location} onChange={e=>setLocation(e.target.value)}
+          placeholder="Ubicación o URL del servicio *"
+          style={{ ...inputStyle, marginBottom:10 }}
+        />
+      )}
+
+      {/* Main text */}
+      <div style={{ position:'relative' }}>
+        <textarea value={text} onChange={e=>setText(e.target.value.slice(0,MAX))}
+          placeholder={`Contá tu experiencia (máx. ${MAX} caracteres)…`}
+          rows={3} maxLength={MAX}
+          style={{ width:'100%',padding:'12px 14px',borderRadius:12,background:'var(--card)',border:`1px solid ${charsLeft<10?'var(--bad)':'var(--border2)'}`,color:'var(--text)',fontSize:14,resize:'none',marginBottom:4,lineHeight:1.6,fontFamily:'inherit',outline:'none' }}
+        />
+        <div style={{ display:'flex',justifyContent:'space-between',marginBottom:14 }}>
+          <span/>
+          <span style={{ fontSize:12,color:charsColor,fontWeight:600 }}>{charsLeft}</span>
+        </div>
+      </div>
+
+      {/* Good / Bad */}
       <div style={{ display:'flex',gap:10 }}>
         {([['good','▲ BUENO','var(--green)','var(--green-dim)','rgba(29,185,84,0.3)'],['bad','▼ MALO','var(--bad)','var(--bad-dim)','rgba(232,52,28,0.3)']] as const).map(([v,l,col,bg,bdr]) => (
-          <button key={v} onClick={()=>setType(v as TipType)} style={{ flex:1,padding:13,borderRadius:14,border:`2px solid ${type===v?bdr:'var(--border)'}`,background:type===v?bg:'transparent',color:type===v?col:'var(--muted)',fontFamily:'inherit',fontWeight:800,fontSize:15,cursor:'pointer',transition:'all .18s',boxShadow:type===v?`0 0 20px ${bg}`:'none' }}>{l}</button>
+          <button key={v} onClick={()=>setType(v as TipType)} style={{ flex:1,padding:13,borderRadius:14,border:`2px solid ${type===v?bdr:'var(--border)'}`,background:type===v?bg:'transparent',color:type===v?col:'var(--muted)',fontFamily:'inherit',fontWeight:800,fontSize:15,cursor:'pointer',transition:'all .18s' }}>{l}</button>
         ))}
       </div>
+
       {error && <div style={{ marginTop:12,color:'var(--bad)',fontSize:13,padding:'10px 14px',background:'var(--bad-dim)',borderRadius:10 }}>{error}</div>}
     </Overlay>
   )
@@ -86,7 +187,7 @@ export default function AddTipModal({ company, onClose, onSuccess }: Props) {
 function Overlay({ children, onClose }: { children:React.ReactNode; onClose:()=>void }) {
   return (
     <div className="animate-fade-in" style={{ position:'fixed',inset:0,background:'rgba(0,0,0,0.8)',backdropFilter:'blur(4px)',display:'flex',alignItems:'flex-end',zIndex:500 }} onClick={onClose}>
-      <div className="animate-slide-up" onClick={e=>e.stopPropagation()} style={{ background:'var(--surface)',borderRadius:'24px 24px 0 0',padding:'20px 20px 40px',width:'100%',maxWidth:520,margin:'0 auto',border:'1px solid var(--border2)',borderBottom:'none' }}>
+      <div className="animate-slide-up" onClick={e=>e.stopPropagation()} style={{ background:'var(--surface)',borderRadius:'24px 24px 0 0',padding:'20px 20px 40px',width:'100%',maxWidth:520,margin:'0 auto',border:'1px solid var(--border2)',borderBottom:'none',maxHeight:'90dvh',overflowY:'auto' }}>
         <div style={{ width:40,height:4,background:'var(--border2)',borderRadius:99,margin:'0 auto 20px' }}/>
         {children}
       </div>
@@ -94,5 +195,6 @@ function Overlay({ children, onClose }: { children:React.ReactNode; onClose:()=>
   )
 }
 
-const redBtn: React.CSSProperties = { display:'block',width:'100%',padding:13,borderRadius:14,background:'linear-gradient(135deg,#e8341c,#a82010)',color:'#fff',fontWeight:700,fontSize:15,border:'none',cursor:'pointer',boxShadow:'0 4px 20px rgba(232,52,28,0.3)' }
+const redBtn:   React.CSSProperties = { display:'block',width:'100%',padding:13,borderRadius:14,background:'linear-gradient(135deg,#e8341c,#a82010)',color:'#fff',fontWeight:700,fontSize:15,border:'none',cursor:'pointer' }
 const ghostBtn: React.CSSProperties = { display:'block',width:'100%',padding:13,borderRadius:14,background:'transparent',border:'1px solid var(--border2)',color:'var(--muted2)',fontWeight:600,fontSize:14,cursor:'pointer' }
+const inputStyle: React.CSSProperties = { width:'100%',padding:'11px 14px',borderRadius:12,background:'var(--card)',border:'1px solid var(--border2)',color:'var(--text)',fontSize:14,outline:'none',fontFamily:'inherit' }
