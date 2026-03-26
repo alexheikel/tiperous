@@ -53,7 +53,7 @@ export default function ExploreClient({ initialCompanies }: Props) {
         .then(r=>r.json()).then(({ data }) => { if (data?.id) router.push(`/company/${data.id}`) })
       return
     }
-    router.push(`/company/${company.id}`)
+    router.push((company as any).slug ? `/c/${(company as any).slug}` : `/company/${company.id}`)
   }
 
   return (

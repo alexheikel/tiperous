@@ -24,7 +24,7 @@ export default function CompanyDetailClient({ company: initial, initialTips }: P
 
   return (
     <div>
-      <button onClick={() => router.back()} style={{
+      <button onClick={() => router.push('/')} style={{
         display:'flex', alignItems:'center', gap:6, background:'none', border:'none',
         color:'var(--red)', fontWeight:700, fontSize:14, cursor:'pointer', marginBottom:20, padding:0,
       }}>← Volver</button>

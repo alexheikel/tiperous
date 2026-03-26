@@ -173,3 +173,25 @@ export default function TipCard({ tip, delay=0 }: { tip:Tip; delay?:number }) {
     </div>
   )
 }
+
+export function TipShareLink({ tipId }: { tipId: string }) {
+  function copy() {
+    navigator.clipboard.writeText(`https://tipero.us/t/${tipId}`)
+  }
+  return (
+    <button onClick={copy} style={{
+      background:'none', border:'none', cursor:'pointer',
+      color:'var(--muted)', fontSize:11, fontFamily:'inherit',
+      display:'inline-flex', alignItems:'center', gap:4,
+      padding:'4px 8px', borderRadius:99,
+      transition:'color .15s',
+    }}
+      onMouseEnter={e=>(e.currentTarget.style.color='var(--text)')}
+      onMouseLeave={e=>(e.currentTarget.style.color='var(--muted)')}
+      title="Copiar link"
+    >
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+      permalink
+    </button>
+  )
+}
