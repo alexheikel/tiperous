@@ -1,4 +1,5 @@
 'use client'
+import type { LocationState } from '@/types/location'
 import { usePathname, useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { useAuth } from '@/hooks/useAuth'
