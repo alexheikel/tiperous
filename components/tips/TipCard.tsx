@@ -101,20 +101,20 @@ export default function TipCard({ tip, delay=0 }: { tip:Tip; delay?:number }) {
       borderLeft:`3px solid ${good?'var(--green)':'var(--bad)'}`,
     }}>
       {/* Header */}
-      <div style={{ display:'flex', alignItems:'center', gap:9, marginBottom:8 }}>
+      <div style={{ display:'flex', alignItems:'flex-start', gap:7, marginBottom:8 }}>
         <div style={{
-          width:30, height:30, borderRadius:'50%', flexShrink:0,
+          width:26, height:26, borderRadius:'50%', flexShrink:0,
           background:'linear-gradient(135deg,#c0392b,#8e0000)',
           display:'flex', alignItems:'center', justifyContent:'center',
-          color:'#fff', fontWeight:700, fontSize:12,
+          color:'#fff', fontWeight:700, fontSize:10,
         }}>{name[0].toUpperCase()}</div>
         <div style={{ flex:1, minWidth:0 }}>
           <a href={profile?.username ? `/u/${profile.username}` : '#'} onClick={e=>e.stopPropagation()} style={{
-            color:'var(--gold)', fontWeight:700, fontSize:12,
+            color:'var(--gold)', fontWeight:700, fontSize:11,
             whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis',
             textDecoration:'none', display:'block',
           }}>{name}</a>
-          <div style={{ color:'var(--muted)', fontSize:10 }}>{ago}</div>
+          <div style={{ color:'var(--muted)', fontSize:9 }}>{ago}</div>
         </div>
         <div style={{ display:'flex', alignItems:'center', gap:6 }}>
           <div style={{
@@ -122,8 +122,8 @@ export default function TipCard({ tip, delay=0 }: { tip:Tip; delay?:number }) {
             background:good?'var(--green-dim)':'var(--bad-dim)',
             border:`1px solid ${good?'rgba(29,185,84,0.2)':'rgba(232,52,28,0.2)'}`,
           }}>
-            <span style={{ fontSize:10 }}>{SEG_ICON[tip.segment]}</span>
-            <span style={{ fontSize:10, fontWeight:700, color:good?'var(--green)':'var(--bad)' }}>
+            <span style={{ fontSize:9 }}>{SEG_ICON[tip.segment]}</span>
+            <span style={{ fontSize:9, fontWeight:700, color:good?'var(--green)':'var(--bad)' }}>
               {SEG_LABEL[tip.segment]}
             </span>
           </div>
@@ -173,7 +173,7 @@ export default function TipCard({ tip, delay=0 }: { tip:Tip; delay?:number }) {
       {(tip as any).employee_name   && <div style={{ fontSize:12,color:'var(--muted2)',fontWeight:600,marginBottom:4 }}>◎ {(tip as any).employee_name}</div>}
       {(tip as any).service_location && <div style={{ fontSize:11,color:'var(--muted)',marginBottom:4 }}>📍 {(tip as any).service_location}</div>}
 
-      <p style={{ color:'var(--text)', fontSize:13, lineHeight:1.65, margin:'0 0 10px' }}>{tip.text}</p>
+      <p style={{ color:'var(--text)', fontSize:12, lineHeight:1.5, margin:'0 0 8px' }}>{tip.text}</p>
 
       {/* Actions */}
       <div style={{ display:'flex', alignItems:'center', gap:8 }}>
