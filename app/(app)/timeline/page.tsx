@@ -99,7 +99,7 @@ export default function TimelinePage() {
         </button>
 
         {currentUserId && (
-          <button onClick={()=>setFollowingOnly(!followingOnly)} style={{
+          <button onClick={()=>{ console.log('following ids:', followingIds); setFollowingOnly(!followingOnly) }} style={{
             padding:'6px 13px', borderRadius:99, border:'1px solid var(--border2)', cursor:'pointer',
             fontFamily:'inherit', fontWeight:600, fontSize:12, transition:'all .15s',
             background: followingOnly?'rgba(124,154,181,0.15)':'var(--card)',
