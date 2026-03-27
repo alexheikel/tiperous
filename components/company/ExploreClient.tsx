@@ -106,7 +106,7 @@ export default function ExploreClient({ initialCompanies }: Props) {
       {/* Search bar */}
       <div style={{ position:'relative', marginBottom:12 }}>
         <input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Buscar empresas o lugares…"
-          style={{ width:'100%',padding:'12px 16px',borderRadius:14,background:'var(--card)',border:'1px solid var(--border2)',color:'var(--text)',fontSize:15,outline:'none',fontFamily:'inherit' }}/>
+          style={{ width:'100%',padding:'12px 16px',borderRadius:14,background:'var(--card)',border:'1px solid var(--border2)',color:'var(--text)',fontSize:16,outline:'none',fontFamily:'inherit' }}/>
         {searching && <div style={{ position:'absolute',right:16,top:'50%',transform:'translateY(-50%)' }}>
           <div className="animate-spin" style={{ width:16,height:16,border:'2px solid var(--border2)',borderTopColor:'var(--red)',borderRadius:'50%' }}/>
         </div>}

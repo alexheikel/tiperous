@@ -124,7 +124,7 @@ export default function TipPage() {
           </div>
           {c._source !== 'google' && (
             <div style={{ display:'flex', alignItems:'center', gap:4, flexShrink:0 }}>
-              <span style={{ fontSize:14, color:c.score_total>=0?'var(--green)':'var(--bad)' }}>
+              <span style={{ fontSize:16, color:c.score_total>=0?'var(--green)':'var(--bad)' }}>
                 {c.score_total>=0?'▲':'▼'}
               </span>
               <span style={{ fontFamily:'Playfair Display,serif', fontWeight:900, fontSize:18,
@@ -148,7 +148,7 @@ export default function TipPage() {
           <div style={{ fontSize:16, fontFamily:'Playfair Display,serif', fontWeight:700, marginBottom:8, color:'var(--text)' }}>
             Compartí tu experiencia
           </div>
-          <div style={{ fontSize:14, lineHeight:1.6 }}>
+          <div style={{ fontSize:16, lineHeight:1.6 }}>
             Escribí el nombre de la empresa arriba<br/>para encontrarla y dejar tu tip
           </div>
         </div>
