@@ -104,7 +104,6 @@ export default function CompanyDetailClient({ company: initial, initialTips }: P
               QR
             </button>
           </div>
-          </div>
         </div>
       </div>
 
