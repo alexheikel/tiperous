@@ -8,6 +8,7 @@ interface Props {
   tipSegment: 'service' | 'product' | 'employee'
   tipText: string
   userName: string
+  tipId?: string
   onClose: () => void
 }
 
@@ -137,9 +138,10 @@ export default function ShareCard({ companyName, companyScore, tipType, tipSegme
     setImgUrl(canvas.toDataURL('image/png'))
   }, [])
 
+  const tipUrl   = `https://tipero.us/t/${(typeof window !== 'undefined' ? window.location.pathname.split('/').pop() : '') || ''}`
   const copyText = good
-    ? `Recomendé ${SEG_LABEL[tipSegment]} de ${companyName} en @tiperous 🟢 tipero.us`
-    : `No recomendé ${SEG_LABEL[tipSegment]} de ${companyName} en @tiperous 🔴 tipero.us`
+    ? `Recomendé ${SEG_LABEL[tipSegment]} de ${companyName} en @tiperous 🟢\n${tipUrl}`
+    : `No recomendé ${SEG_LABEL[tipSegment]} de ${companyName} en @tiperous 🔴\n${tipUrl}`
 
   function shareTwitter() {
     window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(copyText)}`, '_blank')
