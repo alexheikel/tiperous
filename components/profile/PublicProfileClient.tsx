@@ -45,6 +45,7 @@ export default function PublicProfileClient({ profile, tips, isFollowing: initia
   const diff = vibePercent - communityAvg
 
   async function toggleFollow() {
+    alert('clicked ' + profile.id)
     setLoading(true)
     console.log('follow clicked, target:', profile.id)
     const method = following ? 'DELETE' : 'POST'
