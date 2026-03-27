@@ -46,7 +46,13 @@ export default function TipPage() {
     if (company._source === 'google') {
       const res  = await fetch('/api/companies', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ google_place_id: company.google_place_id }) })
       const data = await res.json()
-      if (data?.data) setSelected(data.data)
+      if (data?.data) {
+        // Generate slug if missing
+        if (!data.data.slug) {
+          await fetch('/api/companies/slug', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ id: data.data.id }) })
+        }
+        setSelected(data.data)
+      }
       return
     }
     setSelected(company)
