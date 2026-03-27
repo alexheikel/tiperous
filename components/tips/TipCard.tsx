@@ -38,6 +38,7 @@ export default function TipCard({ tip, delay=0 }: { tip:Tip; delay?:number }) {
   const [posting,      setPosting]      = useState(false)
   const [count,        setCount]        = useState((tip as any).comments_count || 0)
   const [showReport,   setShowReport]   = useState(false)
+  const [linkCopied,   setLinkCopied]   = useState(false)
   const [reported,     setReported]     = useState(false)
   const [reportError,  setReportError]  = useState('')
   const [flagged,      setFlagged]      = useState((tip as any).flagged || false)
@@ -187,17 +188,21 @@ export default function TipCard({ tip, delay=0 }: { tip:Tip; delay?:number }) {
           <svg width="13" height="13" viewBox="0 0 24 24" fill={showComments?"currentColor":"none"} stroke="currentColor" strokeWidth="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
           {count > 0 ? count : ''}
         </button>
-        <button onClick={()=>navigator.clipboard.writeText(`https://tipero.us/t/${tip.id}`)} style={{
+        <button onClick={()=>{
+          navigator.clipboard.writeText(`https://tipero.us/t/${tip.id}`)
+          setLinkCopied(true)
+          setTimeout(()=>setLinkCopied(false), 2000)
+        }} style={{
           display:'inline-flex', alignItems:'center', gap:4,
-          padding:'4px 8px', borderRadius:99, background:'transparent',
-          border:'none', color:'var(--muted)', fontFamily:'inherit',
-          fontSize:11, cursor:'pointer', transition:'color .15s',
-        }}
-          onMouseEnter={e=>(e.currentTarget.style.color='var(--text)')}
-          onMouseLeave={e=>(e.currentTarget.style.color='var(--muted)')}
-        >
-          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
-          link
+          padding:'5px 10px', borderRadius:99,
+          background: linkCopied ? 'rgba(29,185,84,0.12)' : 'transparent',
+          border: linkCopied ? '1px solid rgba(29,185,84,0.25)' : 'none',
+          color: linkCopied ? 'var(--green)' : 'var(--muted)',
+          fontFamily:'inherit', fontSize:11, cursor:'pointer', transition:'all .2s',
+        }}>
+          {linkCopied ? '✓ copiado' : (
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+          )}
         </button>
       </div>
 
