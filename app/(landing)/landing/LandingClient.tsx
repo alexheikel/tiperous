@@ -63,48 +63,102 @@ export default function LandingClient({ stats, topCompanies, recentTips }: Props
           </Link>
         </div>
 
-        {/* Phone mockup */}
-        <div style={{ position:'relative', margin:'0 auto 48px', width:220, height:380 }}>
-          {/* Phone frame */}
-          <div style={{ width:220, height:380, borderRadius:36, background:'#1a1a1c', border:'6px solid #2a2a2e', boxShadow:'0 24px 80px rgba(0,0,0,0.5), inset 0 0 0 1px rgba(255,255,255,0.05)', position:'relative', overflow:'hidden' }}>
-            {/* Status bar */}
-            <div style={{ background:'#0c0c0e', padding:'10px 16px 6px', display:'flex', justifyContent:'space-between', alignItems:'center' }}>
-              <span style={{ fontSize:10, color:'rgba(255,255,255,0.6)', fontWeight:600 }}>10:37</span>
-              <div style={{ width:60, height:14, borderRadius:10, background:'#1a1a1c', border:'1px solid rgba(255,255,255,0.1)' }}/>
-              <span style={{ fontSize:10, color:'rgba(255,255,255,0.6)' }}>●●●</span>
-            </div>
-            {/* App header */}
-            <div style={{ background:'#e8341c', padding:'8px 12px', display:'flex', alignItems:'center', justifyContent:'space-between' }}>
-              <span style={{ fontSize:11, fontWeight:800, color:'#fff', fontFamily:'Georgia,serif' }}>★ Tiperous</span>
-              <span style={{ fontSize:10, color:'rgba(255,255,255,0.8)' }}>Explore</span>
-            </div>
-            {/* Mock tips */}
-            {[
-              { name:'La Vienesa', score:'+4', good:true },
-              { name:'Tigo', score:'-3', good:false },
-              { name:'Bayres Pizza', score:'+1', good:true },
-              { name:'Bank of America', score:'-4', good:false },
-            ].map((c,i)=>(
-              <div key={i} style={{ padding:'8px 12px', borderBottom:'1px solid rgba(255,255,255,0.05)', display:'flex', alignItems:'center', gap:8 }}>
-                <div style={{ width:28, height:28, borderRadius:8, background:'linear-gradient(135deg,#c0392b,#8e0000)', display:'flex', alignItems:'center', justifyContent:'center', color:'#fff', fontSize:12, fontWeight:700, flexShrink:0 }}>{c.name[0]}</div>
-                <div style={{ flex:1 }}>
-                  <div style={{ fontSize:11, fontWeight:600, color:'#f0f0f2' }}>{c.name}</div>
-                  <div style={{ fontSize:9, color:'rgba(255,255,255,0.3)' }}>Food · Buenos Aires</div>
+        {/* 3D Phone mockup */}
+        <div style={{ perspective:1200, margin:'0 auto 52px', width:280, height:420 }}>
+          <div style={{
+            width:240, height:480, margin:'0 auto',
+            transform:'rotateY(-18deg) rotateX(6deg)',
+            transformStyle:'preserve-3d',
+            transition:'transform .6s ease',
+          }}
+            onMouseEnter={e=>(e.currentTarget.style.transform='rotateY(-8deg) rotateX(3deg)')}
+            onMouseLeave={e=>(e.currentTarget.style.transform='rotateY(-18deg) rotateX(6deg)')}
+          >
+            {/* Phone shell */}
+            <div style={{ width:240, height:480, borderRadius:44, background:'#18181b', border:'8px solid #27272a', boxShadow:'20px 20px 60px rgba(0,0,0,0.7), -4px -4px 20px rgba(255,255,255,0.04), inset 0 0 0 1px rgba(255,255,255,0.06)', position:'relative', overflow:'hidden' }}>
+
+              {/* Dynamic island */}
+              <div style={{ position:'absolute', top:10, left:'50%', transform:'translateX(-50%)', width:80, height:22, borderRadius:14, background:'#000', zIndex:10 }}/>
+
+              {/* Screen content */}
+              <div style={{ width:'100%', height:'100%', background:'#0c0c0e', display:'flex', flexDirection:'column', overflow:'hidden' }}>
+
+                {/* Status */}
+                <div style={{ padding:'14px 20px 6px', display:'flex', justifyContent:'space-between', fontSize:10, color:'rgba(255,255,255,0.5)', fontWeight:600, flexShrink:0 }}>
+                  <span>9:41</span>
+                  <span>●●●</span>
                 </div>
-                <span style={{ fontSize:14, fontWeight:800, color:c.good?'#1db954':'#e8341c' }}>{c.score}</span>
+
+                {/* Header */}
+                <div style={{ padding:'6px 14px 8px', display:'flex', alignItems:'center', justifyContent:'space-between', borderBottom:'1px solid rgba(255,255,255,0.06)', flexShrink:0 }}>
+                  <span style={{ color:'#e8341c', fontSize:14, fontWeight:800, fontFamily:'Georgia,serif' }}>Tiperous.</span>
+                  <div style={{ display:'flex', alignItems:'center', gap:6 }}>
+                    <div style={{ background:'rgba(255,255,255,0.08)', borderRadius:10, padding:'3px 8px', fontSize:9, color:'rgba(255,255,255,0.6)' }}>📍 ASU</div>
+                    <div style={{ width:22, height:22, borderRadius:'50%', background:'linear-gradient(135deg,#c0392b,#8e0000)', display:'flex', alignItems:'center', justifyContent:'center', color:'#fff', fontSize:10, fontWeight:700 }}>A</div>
+                  </div>
+                </div>
+
+                {/* Search bar */}
+                <div style={{ padding:'8px 12px 6px', flexShrink:0 }}>
+                  <div style={{ background:'rgba(255,255,255,0.06)', borderRadius:10, padding:'6px 10px', fontSize:10, color:'rgba(255,255,255,0.3)' }}>Buscar empresas...</div>
+                </div>
+
+                {/* Stats row */}
+                <div style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:4, padding:'0 12px 8px', flexShrink:0 }}>
+                  {[['9','Empresas','#f0f0f2'],['4','Buenos','#1db954'],['6','Malos','#e8341c']].map(([val,label,color])=>(
+                    <div key={label} style={{ background:'rgba(255,255,255,0.04)', borderRadius:8, padding:'6px 4px', textAlign:'center' }}>
+                      <div style={{ fontSize:13, fontWeight:800, color, fontFamily:'Georgia,serif' }}>{val}</div>
+                      <div style={{ fontSize:8, color:'rgba(255,255,255,0.35)', marginTop:1 }}>{label}</div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Best/worst labels */}
+                <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:4, padding:'0 12px 4px', flexShrink:0 }}>
+                  <div style={{ fontSize:9, color:'#1db954', fontWeight:700 }}>▲ MEJORES</div>
+                  <div style={{ fontSize:9, color:'#e8341c', fontWeight:700 }}>▼ PEORES</div>
+                </div>
+
+                {/* Company cards */}
+                <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:4, padding:'0 12px', flex:1, overflow:'hidden' }}>
+                  <div style={{ display:'flex', flexDirection:'column', gap:4 }}>
+                    {[['Bayres Pizza','+1',true],['La Vienesa','+4',true],['Mercado Libre','+3',true]].map(([n,s,g])=>(
+                      <div key={n as string} style={{ background:'rgba(255,255,255,0.05)', borderRadius:8, padding:'6px 8px', borderLeft:`2px solid ${g?'#1db954':'#e8341c'}` }}>
+                        <div style={{ fontSize:9, fontWeight:700, color:'#f0f0f2', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{n}</div>
+                        <div style={{ fontSize:11, fontWeight:800, color:'#1db954' }}>{s}</div>
+                      </div>
+                    ))}
+                  </div>
+                  <div style={{ display:'flex', flexDirection:'column', gap:4 }}>
+                    {[['Tigo','-3',false],['Personal','-3',false],['Bank of Am.','-4',false]].map(([n,s,g])=>(
+                      <div key={n as string} style={{ background:'rgba(255,255,255,0.05)', borderRadius:8, padding:'6px 8px', borderLeft:`2px solid ${g?'#1db954':'#e8341c'}` }}>
+                        <div style={{ fontSize:9, fontWeight:700, color:'#f0f0f2', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{n}</div>
+                        <div style={{ fontSize:11, fontWeight:800, color:'#e8341c' }}>{s}</div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Bottom nav */}
+                <div style={{ display:'flex', alignItems:'center', justifyContent:'space-around', padding:'8px 0 14px', borderTop:'1px solid rgba(255,255,255,0.06)', background:'rgba(12,12,14,0.9)', flexShrink:0 }}>
+                  <div style={{ display:'flex', flexDirection:'column', alignItems:'center', gap:2 }}>
+                    <div style={{ width:16, height:16, borderRadius:8, border:'1.5px solid #e8341c' }}/>
+                    <span style={{ fontSize:8, color:'#e8341c', fontWeight:600 }}>Explore</span>
+                  </div>
+                  <div style={{ width:38, height:38, borderRadius:'50%', background:'#e8341c', display:'flex', alignItems:'center', justifyContent:'center', marginTop:-16, boxShadow:'0 4px 16px rgba(232,52,28,0.6)' }}>
+                    <span style={{ color:'#fff', fontSize:16 }}>★</span>
+                  </div>
+                  <div style={{ display:'flex', flexDirection:'column', alignItems:'center', gap:2 }}>
+                    <div style={{ width:16, height:16, borderRadius:8, border:'1.5px solid rgba(255,255,255,0.2)' }}/>
+                    <span style={{ fontSize:8, color:'rgba(255,255,255,0.35)', fontWeight:600 }}>Timeline</span>
+                  </div>
+                </div>
               </div>
-            ))}
-            {/* Bottom nav */}
-            <div style={{ position:'absolute', bottom:0, left:0, right:0, background:'rgba(12,12,14,0.95)', borderTop:'1px solid rgba(255,255,255,0.06)', padding:'8px 0', display:'flex', justifyContent:'space-around', alignItems:'center' }}>
-              <span style={{ fontSize:9, color:'#e8341c', fontWeight:600 }}>Explore</span>
-              <div style={{ width:32, height:32, borderRadius:'50%', background:'#e8341c', display:'flex', alignItems:'center', justifyContent:'center', marginTop:-8, boxShadow:'0 4px 12px rgba(232,52,28,0.5)' }}>
-                <span style={{ color:'#fff', fontSize:14 }}>★</span>
-              </div>
-              <span style={{ fontSize:9, color:'rgba(255,255,255,0.3)', fontWeight:600 }}>Timeline</span>
             </div>
+
+            {/* Side shine */}
+            <div style={{ position:'absolute', top:20, right:-4, width:4, height:440, background:'linear-gradient(180deg,rgba(255,255,255,0.15) 0%,rgba(255,255,255,0.05) 50%,rgba(255,255,255,0.01) 100%)', borderRadius:2 }}/>
           </div>
-          {/* Home button hint */}
-          <div style={{ width:40, height:4, borderRadius:99, background:'rgba(255,255,255,0.15)', margin:'8px auto 0' }}/>
         </div>
 
         {/* Stats */}
