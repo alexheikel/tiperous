@@ -69,11 +69,22 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
   const router   = useRouter()
   const { user, profile } = useAuth()
   const { location, setLocation, resetToGPS, detecting } = useLocation()
-  const [showPicker,  setShowPicker]  = useState(false)
+  const [showPicker,    setShowPicker]    = useState(false)
+  const [showNotifs,    setShowNotifs]    = useState(false)
+  const [notifs,        setNotifs]        = useState<any[]>([])
+  const [unread,        setUnread]        = useState(0)
   const [citySearch,  setCitySearch]  = useState('')
   const [tipPressed,  setTipPressed]  = useState(false)
   const pickerRef = useRef<HTMLDivElement>(null)
   const initials  = (profile?.full_name || profile?.username || user?.email || 'U')[0].toUpperCase()
+
+  useEffect(() => {
+    if (!user) return
+    fetch('/api/notifications').then(r=>r.json()).then(d => {
+      setNotifs(d.data||[])
+      setUnread((d.data||[]).filter((n:any)=>!n.read).length)
+    })
+  }, [user])
 
   useEffect(() => {
     function handleOutside(e: MouseEvent) {
@@ -170,6 +181,55 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
                 backdropFilter:'blur(12px)',
                 color:'var(--muted2)',fontWeight:600,fontSize:12,textDecoration:'none',whiteSpace:'nowrap',
               }}>🏢</Link>
+            )}
+
+            {user && (
+              <div style={{ position:'relative' }}>
+                <button onClick={()=>{ setShowNotifs(!showNotifs); if(!showNotifs){ fetch('/api/notifications/read',{method:'POST'}).catch(()=>{}); setUnread(0) } }} style={{
+                  width:36, height:36, borderRadius:'50%', background:'rgba(255,255,255,0.06)',
+                  border:'1px solid rgba(255,255,255,0.1)', display:'flex', alignItems:'center',
+                  justifyContent:'center', cursor:'pointer', position:'relative', flexShrink:0,
+                }}>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.6)" strokeWidth="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+                  {unread > 0 && (
+                    <div style={{ position:'absolute', top:-2, right:-2, width:16, height:16, borderRadius:'50%', background:'var(--red)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:9, fontWeight:700, color:'#fff', border:'2px solid var(--bg)' }}>
+                      {unread > 9 ? '9+' : unread}
+                    </div>
+                  )}
+                </button>
+
+                {showNotifs && (
+                  <div style={{ position:'absolute', top:'calc(100% + 8px)', right:0, width:300, background:'rgba(20,20,22,0.98)', borderRadius:16, border:'1px solid rgba(255,255,255,0.1)', boxShadow:'0 8px 40px rgba(0,0,0,0.6)', zIndex:300, backdropFilter:'blur(20px)', overflow:'hidden' }}>
+                    <div style={{ padding:'12px 16px', borderBottom:'1px solid rgba(255,255,255,0.06)', display:'flex', justifyContent:'space-between', alignItems:'center' }}>
+                      <span style={{ fontWeight:700, fontSize:14 }}>Notificaciones</span>
+                      {notifs.some(n=>!n.read) && (
+                        <button onClick={()=>{ fetch('/api/notifications',{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({})}); setNotifs(prev=>prev.map(n=>({...n,read:true}))); setUnread(0) }} style={{ background:'none',border:'none',color:'var(--muted)',fontSize:11,cursor:'pointer',fontFamily:'inherit' }}>
+                          Marcar todo leído
+                        </button>
+                      )}
+                    </div>
+                    <div style={{ maxHeight:360, overflowY:'auto' }}>
+                      {notifs.length===0 ? (
+                        <div style={{ padding:'24px 16px', textAlign:'center', color:'var(--muted)', fontSize:13 }}>Sin notificaciones</div>
+                      ) : notifs.map(n => (
+                        <a key={n.id} href={n.link||'#'} onClick={()=>{ setShowNotifs(false); if(!n.read){ fetch('/api/notifications',{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:n.id})}); setNotifs(prev=>prev.map(p=>p.id===n.id?{...p,read:true}:p)) } }} style={{
+                          display:'block', padding:'12px 16px', textDecoration:'none',
+                          background: n.read ? 'transparent' : 'rgba(232,52,28,0.06)',
+                          borderBottom:'1px solid rgba(255,255,255,0.04)',
+                          transition:'background .15s',
+                        }}>
+                          <div style={{ fontSize:13, color:'var(--text)', marginBottom:2 }}>{n.title}</div>
+                          {n.body && <div style={{ fontSize:12, color:'var(--muted)', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{n.body}</div>}
+                          <div style={{ fontSize:10, color:'var(--muted)', marginTop:4 }}>
+                            {new Date(n.created_at).toLocaleDateString('es', { day:'numeric', month:'short', hour:'2-digit', minute:'2-digit' })}
+                            {!n.read && <span style={{ marginLeft:8, color:'var(--red)', fontWeight:700 }}>● nuevo</span>}
+                          </div>
+                        </a>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
             )}
 
             {user ? (
