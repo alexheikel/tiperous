@@ -1,5 +1,5 @@
-import { getUserLevel, VIBE_CONFIG } from '@/lib/levels'
 'use client'
+import { getUserLevel, VIBE_CONFIG } from '@/lib/levels'
 import { useState } from 'react'
 import Link from 'next/link'
 import { formatDistanceToNow } from 'date-fns'
