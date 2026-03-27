@@ -14,6 +14,11 @@ export interface Profile {
   full_name:  string | null
   avatar_url: string | null
   bio:        string | null
+  is_business:       boolean | null
+  business_name:     string | null
+  business_verified: boolean | null
+  stripe_customer_id: string | null
+  stripe_payment_id:  string | null
   followers_count: number | null
   following_count: number | null
   tips_count:      number | null
