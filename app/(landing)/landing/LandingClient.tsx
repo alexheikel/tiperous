@@ -68,7 +68,7 @@ export default function LandingClient({ stats, topCompanies, recentTips }: Props
           <div style={{
             width:240, height:480, margin:'0 auto',
             transform:'rotateY(-18deg) rotateX(6deg)',
-            transformStyle:'preserve-3d',
+            transformStyle:'preserve-3d', overflow:'visible',
             transition:'transform .6s ease',
           }}
             onMouseEnter={e=>(e.currentTarget.style.transform='rotateY(-8deg) rotateX(3deg)')}
@@ -156,8 +156,7 @@ export default function LandingClient({ stats, topCompanies, recentTips }: Props
               </div>
             </div>
 
-            {/* Side shine */}
-            <div style={{ position:'absolute', top:20, right:-4, width:4, height:440, background:'linear-gradient(180deg,rgba(255,255,255,0.15) 0%,rgba(255,255,255,0.05) 50%,rgba(255,255,255,0.01) 100%)', borderRadius:2 }}/>
+
           </div>
         </div>
 
