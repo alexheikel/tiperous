@@ -46,11 +46,14 @@ export default function PublicProfileClient({ profile, tips, isFollowing: initia
 
   async function toggleFollow() {
     setLoading(true)
+    console.log('follow clicked, target:', profile.id)
     const method = following ? 'DELETE' : 'POST'
     const res = await fetch('/api/follow', {
       method, headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ target_id: profile.id }),
     })
+    const data = await res.json().catch(()=>({}))
+    console.log('follow response:', res.status, data)
     if (res.ok) { setFollowing(!following); setFollowers(prev => following ? prev - 1 : prev + 1) }
     setLoading(false)
   }
