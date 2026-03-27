@@ -33,13 +33,14 @@ export default function CompanyDetailClient({ company: initial, initialTips }: P
 
       {/* Hero card */}
       <div style={{
-        background:'linear-gradient(135deg,#180a08 0%,#1e0c0a 100%)',
+        background:'rgba(255,255,255,0.04)', backdropFilter:'blur(40px) saturate(180%)', WebkitBackdropFilter:'blur(40px) saturate(180%)',
         borderRadius:22, padding:'22px 20px', marginBottom:18,
-        border:'1px solid rgba(232,52,28,0.15)', position:'relative', overflow:'hidden',
+        border:'1px solid rgba(255,255,255,0.1)', position:'relative', overflow:'hidden',
+        boxShadow:'0 8px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.08)',
       }}>
         <div style={{
           position:'absolute', top:-60, right:-60, width:220, height:220, borderRadius:'50%',
-          background:'radial-gradient(circle,rgba(232,52,28,0.10),transparent 70%)', pointerEvents:'none',
+          background:'radial-gradient(circle,rgba(255,255,255,0.03),transparent 70%)', pointerEvents:'none',
         }}/>
         <div style={{ display:'flex', gap:16, marginBottom:20, alignItems:'flex-start' }}>
           <div style={{
@@ -91,6 +92,16 @@ export default function CompanyDetailClient({ company: initial, initialTips }: P
           })}
           <div className="live-badge" style={{ marginLeft:'auto' }}>
             <div className="live-dot"/><span>LIVE</span>
+            </div>
+            <button onClick={()=>setQrOpen(true)} style={{
+              background:'rgba(255,255,255,0.08)', border:'1px solid rgba(255,255,255,0.12)',
+              borderRadius:99, padding:'5px 12px', cursor:'pointer',
+              color:'rgba(255,255,255,0.7)', fontSize:11, fontWeight:700, fontFamily:'inherit',
+              display:'inline-flex', alignItems:'center', gap:5, backdropFilter:'blur(8px)',
+            }}>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><path d="M14 14h3v3h-3zM17 17h3v3h-3zM14 20h3"/></svg>
+              QR
+            <div style={{ display:'none' }}
           </div>
         </div>
       </div>
