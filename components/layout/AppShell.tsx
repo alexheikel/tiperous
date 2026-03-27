@@ -89,12 +89,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
         borderBottom:'1px solid rgba(255,255,255,0.06)',
       }}>
         <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', padding:'10px 18px' }}>
-          <Link href="/" style={{ textDecoration:'none' }}>
-            <span style={{
-              fontFamily:'var(--font-pacifico), Pacifico, cursive',
-              fontSize:30, color:'#e8341c', letterSpacing:-1, lineHeight:1,
-            }}>Tiperous.</span>
-          </Link>
+          <Link href="/" style={{ textDecoration:"none" }}><img src="/logo-text.png" alt="Tiperous" style={{ height:34, width:"auto" }} /></Link>
 
           <div style={{ display:'flex', alignItems:'center', gap:8 }}>
             {/* City picker */}
