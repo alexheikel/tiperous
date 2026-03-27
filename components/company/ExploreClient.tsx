@@ -5,7 +5,7 @@ import type { Company } from '@/types'
 import CompanyCard from './CompanyCard'
 import AddTipModal from '../tips/AddTipModal'
 import { useAuth } from '@/hooks/useAuth'
-import type { LocationState } from '@/components/layout/AppShell'
+import type { LocationState } from '@/types/location'
 
 interface Props { initialCompanies: Company[] }
 
