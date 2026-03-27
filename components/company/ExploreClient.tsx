@@ -211,13 +211,36 @@ function SLabel({ children, color }: { children:React.ReactNode; color?:string }
   return <div style={{ color:color||'var(--muted2)',fontWeight:700,fontSize:11,letterSpacing:1,marginBottom:10,textTransform:'uppercase' }}>{children}</div>
 }
 function ScoreCol({ c, i, color, onClick }: { c:Company; i:number; color:string; onClick:()=>void }) {
+  const segs = [
+    { key:'score_service',  icon:'⚙', label:'Serv'  },
+    { key:'score_product',  icon:'◈', label:'Prod'  },
+    { key:'score_employee', icon:'◎', label:'Emp'   },
+  ]
   return (
-    <div onClick={onClick} style={{ background:'var(--card)',borderRadius:13,padding:'10px 12px',marginBottom:8,cursor:'pointer',border:'1px solid var(--border)',borderTop:`2px solid ${color}`,transition:'background .15s' }}
+    <div onClick={onClick} style={{ background:'var(--card)',borderRadius:13,padding:'12px',marginBottom:8,cursor:'pointer',border:'1px solid var(--border)',borderTop:`2px solid ${color}`,transition:'background .15s' }}
       onMouseEnter={e=>(e.currentTarget.style.background='var(--card2)')}
       onMouseLeave={e=>(e.currentTarget.style.background='var(--card)')}>
-      <div style={{ fontFamily:'Playfair Display,serif',fontWeight:900,fontSize:20,color }}>{c.score_total>0?'+':''}{c.score_total}</div>
-      <div style={{ color:'var(--muted)',fontSize:10,marginBottom:2 }}>Total score</div>
-      <div style={{ color:'var(--text)',fontFamily:'Playfair Display,serif',fontWeight:700,fontSize:13,whiteSpace:'nowrap',overflow:'hidden',textOverflow:'ellipsis' }}>{i+1}. {c.name}</div>
+      <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:4 }}>
+        <div style={{ color:'var(--text)',fontFamily:'Playfair Display,serif',fontWeight:700,fontSize:14,whiteSpace:'nowrap',overflow:'hidden',textOverflow:'ellipsis',flex:1,marginRight:8 }}>{i+1}. {c.name}</div>
+        <div style={{ fontFamily:'Playfair Display,serif',fontWeight:900,fontSize:18,color,flexShrink:0 }}>{c.score_total>0?'+':''}{c.score_total}</div>
+      </div>
+      <div style={{ display:'flex', gap:4, flexWrap:'wrap' }}>
+        {segs.map(({ key, icon, label }) => {
+          const v = (c as any)[key] as number || 0
+          return (
+            <div key={key} style={{
+              display:'flex', alignItems:'center', gap:3,
+              padding:'3px 7px', borderRadius:99, fontSize:10,
+              background: v>0?'var(--green-dim)':v<0?'var(--bad-dim)':'rgba(255,255,255,0.04)',
+              border:`1px solid ${v>0?'rgba(29,185,84,0.2)':v<0?'rgba(232,52,28,0.2)':'var(--border)'}`,
+            }}>
+              <span style={{ color:'var(--muted)' }}>{icon}</span>
+              <span style={{ fontWeight:700, color:v>0?'var(--green)':v<0?'var(--bad)':'var(--muted2)' }}>{v>0?'+':''}{v}</span>
+              <span style={{ color:'var(--muted)' }}>{label}</span>
+            </div>
+          )
+        })}
+      </div>
     </div>
   )
 }
