@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import type { Company, TipType, TipSegment } from '@/types'
 import { useAuth } from '@/hooks/useAuth'
+import ShareCard from '@/components/tips/ShareCard'
 
 const SEGS: { id:TipSegment; label:string; icon:string }[] = [
   { id:'service',  label:'Servicio',  icon:'⚙' },
@@ -21,7 +22,8 @@ export default function AddTipModal({ company, onClose, onSuccess }: Props) {
   const [text,      setText]      = useState('')
   const [error,     setError]     = useState('')
   const [loading,   setLoading]   = useState(false)
-  const [submitted, setSubmitted] = useState(false)
+  const [submitted,  setSubmitted]  = useState(false)
+  const [showShare,   setShowShare]   = useState(false)
   // Extra fields
   const [empName,   setEmpName]   = useState('')   // employee name
   const [prodTitle, setProdTitle] = useState('')   // product title
@@ -43,14 +45,30 @@ export default function AddTipModal({ company, onClose, onSuccess }: Props) {
   )
 
   if (submitted) return (
-    <Overlay onClose={onSuccess}>
-      <div style={{ textAlign:'center',padding:'8px 0' }}>
-        <div style={{ fontSize:52,marginBottom:12 }}>{type==='good'?'🟢':'🔴'}</div>
-        <h3 style={{ fontFamily:'Playfair Display,serif',fontWeight:900,fontSize:22,marginBottom:8 }}>¡Tip enviado!</h3>
-        <p style={{ color:'var(--muted2)',fontSize:14,lineHeight:1.6 }}>Tu experiencia en <strong style={{ color:'var(--text)' }}>{company.name}</strong> ya es visible.</p>
-        <button onClick={onSuccess} style={{ ...redBtn,marginTop:24 }}>Listo</button>
-      </div>
-    </Overlay>
+    <>
+      <Overlay onClose={onSuccess}>
+        <div style={{ textAlign:'center',padding:'8px 0' }}>
+          <div style={{ fontSize:52,marginBottom:12 }}>{type==='good'?'🟢':'🔴'}</div>
+          <h3 style={{ fontFamily:'Playfair Display,serif',fontWeight:900,fontSize:22,marginBottom:8 }}>¡Tip enviado!</h3>
+          <p style={{ color:'var(--muted2)',fontSize:14,lineHeight:1.6 }}>Tu experiencia en <strong style={{ color:'var(--text)' }}>{company.name}</strong> ya es visible.</p>
+          <button onClick={()=>setShowShare(true)} style={{ ...redBtn,marginTop:20 }}>
+            📲 Compartir en redes
+          </button>
+          <button onClick={onSuccess} style={{ ...ghostBtn,marginTop:10 }}>Listo</button>
+        </div>
+      </Overlay>
+      {showShare && (
+        <ShareCard
+          companyName={company.name}
+          companyScore={company.score_total}
+          tipType={type}
+          tipSegment={seg}
+          tipText={text}
+          userName={user?.email?.split('@')[0] || 'Anónimo'}
+          onClose={()=>setShowShare(false)}
+        />
+      )}
+    </>
   )
 
   function handleImgChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -95,7 +113,7 @@ export default function AddTipModal({ company, onClose, onSuccess }: Props) {
     })
     const data = await res.json()
     if (!res.ok) { setError(data.error||'Error al enviar.'); setLoading(false); return }
-    setSubmitted(true); setLoading(false)
+    setSubmitted(true); setLoading(false); setShowShare(true)
   }
 
   const charsLeft = MAX - text.length
