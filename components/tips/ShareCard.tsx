@@ -28,106 +28,110 @@ export default function ShareCard({ companyName, companyScore, tipType, tipSegme
     canvas.width  = W
     canvas.height = H
 
-    // Background
-    ctx.fillStyle = '#0c0c0e'
+    // Background gradient
+    ctx.fillStyle = '#0d0d0f'
     ctx.fillRect(0, 0, W, H)
 
-    // Red accent top bar
+    // Subtle vignette
+    const vign = ctx.createRadialGradient(540, 540, 200, 540, 540, 760)
+    vign.addColorStop(0, 'rgba(0,0,0,0)')
+    vign.addColorStop(1, 'rgba(0,0,0,0.6)')
+    ctx.fillStyle = vign
+    ctx.fillRect(0, 0, W, H)
+
+    // Top red line
     ctx.fillStyle = '#e8341c'
-    ctx.fillRect(0, 0, W, 8)
+    ctx.fillRect(0, 0, W, 6)
 
-    // Subtle grid pattern
-    ctx.strokeStyle = 'rgba(255,255,255,0.03)'
-    ctx.lineWidth = 1
-    for (let x = 0; x < W; x += 60) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke() }
-    for (let y = 0; y < H; y += 60) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke() }
-
-    // Company initial circle
-    const cx = 540, cy = 280, cr = 90
-    const grad = ctx.createRadialGradient(cx-20, cy-20, 10, cx, cy, cr)
-    grad.addColorStop(0, '#c0392b')
-    grad.addColorStop(1, '#8e0000')
-    ctx.fillStyle = grad
-    ctx.beginPath()
-    ctx.arc(cx, cy, cr, 0, Math.PI * 2)
-    ctx.fill()
-
-    // Company initial letter
-    ctx.fillStyle = '#fff'
-    ctx.font      = 'bold 80px Georgia, serif'
+    // ★ Logo mark
+    ctx.fillStyle = '#e8341c'
+    ctx.font      = 'bold 52px Georgia, serif'
     ctx.textAlign = 'center'
     ctx.textBaseline = 'middle'
-    ctx.fillText(companyName[0].toUpperCase(), cx, cy)
+    ctx.fillText('★', 540, 120)
+
+    ctx.fillStyle = '#f0f0f2'
+    ctx.font      = 'bold 32px Georgia, serif'
+    ctx.fillText('tipero.us', 540, 170)
+
+    // Divider
+    ctx.strokeStyle = 'rgba(232,52,28,0.3)'
+    ctx.lineWidth   = 1
+    ctx.beginPath(); ctx.moveTo(200, 200); ctx.lineTo(880, 200); ctx.stroke()
 
     // Company name
     ctx.fillStyle = '#f0f0f2'
-    ctx.font      = 'bold 52px Georgia, serif'
+    ctx.font      = 'bold 58px Georgia, serif'
     ctx.textAlign = 'center'
     ctx.textBaseline = 'alphabetic'
-    ctx.fillText(companyName, 540, 430)
+    // Wrap if too long
+    const maxW = 860
+    let cname = companyName
+    if (ctx.measureText(cname).width > maxW) {
+      ctx.font = 'bold 44px Georgia, serif'
+    }
+    ctx.fillText(cname, 540, 310)
 
-    // Score badge
-    const scoreColor = companyScore >= 0 ? '#1db954' : '#e8341c'
-    const scoreText  = (companyScore > 0 ? '+' : '') + companyScore
-    const arrow      = companyScore >= 0 ? '▲' : '▼'
-    ctx.fillStyle = scoreColor + '22'
-    roundRect(ctx, 390, 450, 300, 70, 35)
-    ctx.fill()
-    ctx.strokeStyle = scoreColor + '55'
-    ctx.lineWidth   = 2
-    roundRect(ctx, 390, 450, 300, 70, 35)
-    ctx.stroke()
-    ctx.fillStyle    = scoreColor
-    ctx.font         = 'bold 36px Georgia, serif'
-    ctx.textAlign    = 'center'
-    ctx.textBaseline = 'middle'
-    ctx.fillText(`${arrow} ${scoreText} overall`, 540, 485)
+    // Score badge (only if not 0)
+    if (companyScore !== 0) {
+      const scoreColor = companyScore > 0 ? '#1db954' : '#e8341c'
+      const scoreText  = (companyScore > 0 ? '+' : '') + companyScore
+      const arrow      = companyScore > 0 ? '▲' : '▼'
+      ctx.fillStyle = scoreColor + '18'
+      roundRect(ctx, 380, 330, 320, 60, 30)
+      ctx.fill()
+      ctx.strokeStyle = scoreColor + '40'
+      ctx.lineWidth   = 1.5
+      roundRect(ctx, 380, 330, 320, 60, 30)
+      ctx.stroke()
+      ctx.fillStyle    = scoreColor
+      ctx.font         = '500 28px -apple-system, sans-serif'
+      ctx.textAlign    = 'center'
+      ctx.textBaseline = 'middle'
+      ctx.fillText(`${arrow} ${scoreText} puntos`, 540, 360)
+    }
 
-    // Divider
-    ctx.strokeStyle = 'rgba(255,255,255,0.08)'
+    // Main divider
+    ctx.strokeStyle = 'rgba(255,255,255,0.06)'
     ctx.lineWidth   = 1
-    ctx.beginPath(); ctx.moveTo(100, 555); ctx.lineTo(980, 555); ctx.stroke()
+    ctx.beginPath(); ctx.moveTo(80, 430); ctx.lineTo(1000, 430); ctx.stroke()
 
-    // Tip action text
-    const action = good
+    // Tip type label
+    const labelColor = good ? '#1db954' : '#e8341c'
+    const labelText  = good
       ? `✓ Recomendó ${SEG_LABEL[tipSegment]}`
       : `✗ No recomendó ${SEG_LABEL[tipSegment]}`
-    ctx.fillStyle = good ? '#1db954' : '#e8341c'
-    ctx.font      = '500 32px -apple-system, sans-serif'
-    ctx.textAlign = 'center'
-    ctx.textBaseline = 'alphabetic'
-    ctx.fillText(action, 540, 610)
 
-    // Tip text (wrapped)
-    ctx.fillStyle = '#c0c0cc'
-    ctx.font      = '400 30px -apple-system, sans-serif'
+    ctx.fillStyle    = labelColor
+    ctx.font         = '600 30px -apple-system, sans-serif'
+    ctx.textAlign    = 'center'
+    ctx.textBaseline = 'alphabetic'
+    ctx.fillText(labelText, 540, 510)
+
+    // Tip text
+    ctx.fillStyle = '#e0e0e8'
+    ctx.font      = '400 34px Georgia, serif'
     ctx.textAlign = 'center'
     const words   = `"${tipText}"`.split(' ')
-    let line = '', y = 670, lineH = 44
+    let line = '', y = 590, lineH = 50
     for (const word of words) {
       const test = line + word + ' '
-      if (ctx.measureText(test).width > 800 && line !== '') {
-        ctx.fillText(line.trim(), 540, y)
-        line = word + ' '; y += lineH
+      if (ctx.measureText(test).width > 820 && line !== '') {
+        ctx.fillText(line.trim(), 540, y); line = word + ' '; y += lineH
       } else { line = test }
     }
     if (line) ctx.fillText(line.trim(), 540, y)
 
-    // User
-    ctx.fillStyle = '#6e6e7a'
-    ctx.font      = '400 24px -apple-system, sans-serif'
-    ctx.textAlign = 'center'
-    ctx.fillText(`— ${userName} en Tiperous`, 540, 900)
+    // User attribution
+    ctx.fillStyle    = '#555566'
+    ctx.font         = '400 24px -apple-system, sans-serif'
+    ctx.textAlign    = 'center'
+    ctx.textBaseline = 'alphabetic'
+    ctx.fillText(`— ${userName}`, 540, 920)
 
-    // Logo / branding
+    // Bottom red line
     ctx.fillStyle = '#e8341c'
-    ctx.font      = 'bold 28px Georgia, serif'
-    ctx.textAlign = 'center'
-    ctx.fillText('★ tipero.us', 540, 960)
-
-    // Red accent bottom bar
-    ctx.fillStyle = '#e8341c'
-    ctx.fillRect(0, H - 8, W, 8)
+    ctx.fillRect(0, H - 6, W, 6)
 
     setImgUrl(canvas.toDataURL('image/png'))
   }, [])
@@ -174,7 +178,7 @@ export default function ShareCard({ companyName, companyScore, tipType, tipSegme
     <div style={{
       position:'fixed', inset:0, background:'rgba(0,0,0,0.92)', backdropFilter:'blur(8px)',
       display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center',
-      zIndex:600, padding:20,
+      zIndex:1000, padding:20,
     }} onClick={onClose}>
       <div onClick={e=>e.stopPropagation()} style={{ width:'100%', maxWidth:460 }}>
         <canvas ref={canvasRef} style={{ display:'none' }}/>
