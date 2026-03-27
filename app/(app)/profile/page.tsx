@@ -11,11 +11,12 @@ export default function ProfilePage() {
   const supabase = createClient()
   const [fullName, setFullName] = useState('')
   const [bio,      setBio]      = useState('')
+  const [username, setUsername] = useState('')
   const [saving,   setSaving]   = useState(false)
   const [saved,    setSaved]    = useState(false)
 
   useEffect(() => {
-    if (profile) { setFullName(profile.full_name||''); setBio(profile.bio||'') }
+    if (profile) { setFullName(profile.full_name||''); setBio(profile.bio||''); setUsername(profile.username||'') }
   }, [profile])
 
   if (loading) return (
@@ -29,7 +30,7 @@ export default function ProfilePage() {
 
   async function handleSave() {
     setSaving(true)
-    await supabase.from('profiles').update({ full_name:fullName.trim(), bio:bio.trim() }).eq('id', user!.id)
+    await supabase.from('profiles').update({ full_name:fullName.trim(), bio:bio.trim(), username:username.trim()||profile?.username }).eq('id', user!.id)
     setSaving(false); setSaved(true); setTimeout(()=>setSaved(false), 2000)
   }
 
@@ -64,6 +65,16 @@ export default function ProfilePage() {
           <label style={{ color:'var(--muted2)', fontSize:11, fontWeight:700, letterSpacing:1, display:'block', marginBottom:6 }}>NOMBRE</label>
           <input value={fullName} onChange={e=>setFullName(e.target.value)} placeholder="Tu nombre completo"
             style={{ width:'100%',padding:'12px 14px',borderRadius:12,background:'var(--card)',border:'1px solid var(--border2)',color:'var(--text)',fontSize:15,outline:'none' }}/>
+        </div>
+        <div>
+          <label style={{ color:'var(--muted2)', fontSize:11, fontWeight:700, letterSpacing:1, display:'block', marginBottom:6 }}>USUARIO</label>
+          <div style={{ position:'relative' }}>
+            <span style={{ position:'absolute', left:14, top:'50%', transform:'translateY(-50%)', color:'var(--muted)', fontSize:15 }}>@</span>
+            <input value={username} onChange={e=>setUsername(e.target.value.toLowerCase().replace(/[^a-z0-9_]/g,'').slice(0,30))}
+              placeholder="tu_usuario"
+              style={{ width:'100%',padding:'12px 14px 12px 30px',borderRadius:12,background:'var(--card)',border:'1px solid var(--border2)',color:'var(--text)',fontSize:15,outline:'none' }}/>
+          </div>
+          <div style={{ color:'var(--muted)', fontSize:11, marginTop:4 }}>tipero.us/u/{username || 'tu_usuario'}</div>
         </div>
         <div>
           <label style={{ color:'var(--muted2)', fontSize:11, fontWeight:700, letterSpacing:1, display:'block', marginBottom:6 }}>BIO</label>

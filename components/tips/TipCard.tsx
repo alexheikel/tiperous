@@ -108,8 +108,11 @@ export default function TipCard({ tip, delay=0 }: { tip:Tip; delay?:number }) {
           color:'#fff', fontWeight:700, fontSize:12,
         }}>{name[0].toUpperCase()}</div>
         <div style={{ flex:1, minWidth:0 }}>
-          <div style={{ color:'var(--gold)', fontWeight:700, fontSize:12,
-            whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis' }}>{name}</div>
+          <a href={profile?.username ? `/u/${profile.username}` : '#'} onClick={e=>e.stopPropagation()} style={{
+            color:'var(--gold)', fontWeight:700, fontSize:12,
+            whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis',
+            textDecoration:'none', display:'block',
+          }}>{name}</a>
           <div style={{ color:'var(--muted)', fontSize:10 }}>{ago}</div>
         </div>
         <div style={{ display:'flex', alignItems:'center', gap:6 }}>
