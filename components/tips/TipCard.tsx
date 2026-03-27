@@ -162,6 +162,19 @@ export default function TipCard({ tip, delay=0 }: { tip:Tip; delay?:number }) {
         </div>
       )}
 
+      {/* Company name link */}
+      {(tip as any).company && (
+        <a href={`/c/${(tip as any).company.slug || (tip as any).company_id}`}
+          onClick={e=>e.stopPropagation()}
+          style={{ display:'inline-flex', alignItems:'center', gap:4, marginBottom:6, textDecoration:'none',
+            color:'var(--muted2)', fontSize:11, fontWeight:600,
+            background:'rgba(255,255,255,0.05)', borderRadius:99, padding:'3px 8px',
+            border:'1px solid rgba(255,255,255,0.08)',
+          }}>
+          🏢 {(tip as any).company.name}
+        </a>
+      )}
+
       {/* Product image */}
       {(tip as any).product_image && (
         <img src={(tip as any).product_image} alt={(tip as any).product_title||'Producto'}

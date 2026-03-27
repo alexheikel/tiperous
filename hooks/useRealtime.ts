@@ -4,7 +4,7 @@ import { createClient } from '@/lib/supabase/client'
 import type { Tip } from '@/types'
 
 async function fetchTipsWithProfiles(supabase: any, companyId?: string) {
-  let query = supabase.from('tips').select('*').order('created_at', { ascending:false }).limit(30)
+  let query = supabase.from('tips').select('*, company:companies(name,slug)').order('created_at', { ascending:false }).limit(30)
   if (companyId) query = query.eq('company_id', companyId)
   const { data: tips } = await query
   if (!tips?.length) return []
