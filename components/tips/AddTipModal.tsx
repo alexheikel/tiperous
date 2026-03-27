@@ -237,7 +237,7 @@ export default function AddTipModal({ company, onClose, onSuccess }: Props) {
         <textarea value={text} onChange={e=>setText(e.target.value.slice(0,MAX))}
           placeholder={`Contá tu experiencia${selectedEntity?` con ${selectedEntity.name}`:''}…`}
           rows={3} maxLength={MAX}
-          style={{ width:'100%',padding:'12px 14px',borderRadius:12,background:'var(--card)',border:`1px solid ${charsLeft<10?'var(--bad)':'var(--border2)'}`,color:'var(--text)',fontSize:14,resize:'none',marginBottom:4,lineHeight:1.6,fontFamily:'inherit',outline:'none' }}
+          style={{ width:'100%',padding:'12px 14px',borderRadius:12,background:'var(--card)',border:`1px solid ${charsLeft<10?'var(--bad)':'var(--border2)'}`,color:'var(--text)',fontSize:16,resize:'none',marginBottom:4,lineHeight:1.6,fontFamily:'inherit',outline:'none' }}
           onClick={()=>setShowDropdown(false)}
         />
         <div style={{ textAlign:'right',marginBottom:14 }}>
@@ -275,4 +275,4 @@ function Overlay({ children, onClose }: { children:React.ReactNode; onClose:()=>
 
 const redBtn:    React.CSSProperties = { display:'block',width:'100%',padding:13,borderRadius:14,background:'linear-gradient(135deg,#e8341c,#a82010)',color:'#fff',fontWeight:700,fontSize:15,border:'none',cursor:'pointer' }
 const ghostBtn:  React.CSSProperties = { display:'block',width:'100%',padding:13,borderRadius:14,background:'transparent',border:'1px solid var(--border2)',color:'var(--muted2)',fontWeight:600,fontSize:14,cursor:'pointer' }
-const inputStyle: React.CSSProperties = { width:'100%',padding:'11px 14px',borderRadius:12,background:'var(--card)',border:'1px solid var(--border2)',color:'var(--text)',fontSize:14,outline:'none',fontFamily:'inherit' }
+const inputStyle: React.CSSProperties = { width:'100%',padding:'11px 14px',borderRadius:12,background:'var(--card)',border:'1px solid var(--border2)',color:'var(--text)',fontSize:16,outline:'none',fontFamily:'inherit' }

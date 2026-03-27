@@ -68,7 +68,7 @@ export default function BusinessRegisterClient() {
       <div style={{ marginBottom:20 }}>
         <label style={{ color:'var(--muted2)', fontSize:11, fontWeight:700, letterSpacing:1, display:'block', marginBottom:8 }}>TU EMPRESA (OPCIONAL)</label>
         <input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Buscá tu empresa..."
-          style={{ width:'100%',padding:'12px 14px',borderRadius:12,background:'var(--card)',border:'1px solid var(--border2)',color:'var(--text)',fontSize:14,outline:'none',fontFamily:'inherit',marginBottom:8 }}/>
+          style={{ width:'100%',padding:'12px 14px',borderRadius:12,background:'var(--card)',border:'1px solid var(--border2)',color:'var(--text)',fontSize:16,outline:'none',fontFamily:'inherit',marginBottom:8 }}/>
         {results.map(c=>(
           <div key={c.id} onClick={()=>{ setSelected(c); setQuery(c.name); setResults([]) }} style={{
             padding:'10px 14px', borderRadius:10, cursor:'pointer',
