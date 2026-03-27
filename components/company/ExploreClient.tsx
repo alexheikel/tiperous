@@ -235,7 +235,7 @@ export default function ExploreClient({ initialCompanies }: Props) {
           </div>
 
           {!sortChrono && (best.length>0||worst.length>0) && (
-            <div style={{ display:'grid',gridTemplateColumns:'1fr 1fr',gap:10,marginBottom:20,overflow:'hidden' }}>
+            <div style={{ display:'grid',gridTemplateColumns:'calc(50% - 5px) calc(50% - 5px)',gap:10,marginBottom:20,width:'100%' }}>
               <div>
                 <SLabel color="var(--green)">▲ Mejores</SLabel>
                 <div style={{ overflowY:'auto',maxHeight:360 }}>
@@ -277,7 +277,7 @@ function ScoreCol({ c, i, color, onClick }: { c:Company; i:number; color:string;
     { key:'score_employee', icon:'◎', label:'Emp'   },
   ]
   return (
-    <div onClick={onClick} style={{ background:'var(--card)',borderRadius:13,padding:'12px',marginBottom:8,cursor:'pointer',border:'1px solid var(--border)',borderTop:`2px solid ${color}`,transition:'background .15s' }}
+    <div onClick={onClick} style={{ background:'var(--card)',borderRadius:13,padding:'10px 8px',marginBottom:8,cursor:'pointer',border:'1px solid var(--border)',borderTop:`2px solid ${color}`,transition:'background .15s',overflow:'hidden',minWidth:0 }}
       onMouseEnter={e=>(e.currentTarget.style.background='var(--card2)')}
       onMouseLeave={e=>(e.currentTarget.style.background='var(--card)')}>
       <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:4 }}>
