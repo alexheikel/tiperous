@@ -3,9 +3,7 @@ import { usePathname, useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { useAuth } from '@/hooks/useAuth'
 import { useState, useEffect, useRef } from 'react'
-import type { LocationState } from '@/components/layout/AppShell'
 
-export { useLocation } from '@/components/layout/AppShell'
 
 const POPULAR_CITIES = [
   { city:'Asunción',         countryCode:'PY', lat:-25.2867, lng:-57.647  },
