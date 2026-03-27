@@ -51,7 +51,7 @@ export default function ExploreClient({ initialCompanies }: Props) {
         const res  = await fetch(url)
         const data = await res.json()
         setNearby(data.data || [])
-        setShowNearby(true)
+        // // setShowNearby(true) - disabled auto - disabled auto
       }
       // Also load all companies
       const res2  = await fetch('/api/companies')
