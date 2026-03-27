@@ -235,7 +235,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
           }}
             onMouseEnter={e=>(e.currentTarget.style.transform='scale(1.08)')}
             onMouseLeave={e=>(e.currentTarget.style.transform='scale(1)')}
-          >★</button>
+          ><span style={{display:"inline-block",transform:"rotate(-12deg)",fontSize:"inherit"}}>★</span></button>
           <span style={{ fontSize:11, fontWeight:600, color:'var(--muted)', marginTop:2 }}>Tip</span>
         </div>
         <NavBtn href="/timeline" active={pathname==='/timeline'} label="Timeline" icon={<ClockIcon active={pathname==='/timeline'}/>} />
