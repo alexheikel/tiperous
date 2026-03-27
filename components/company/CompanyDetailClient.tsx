@@ -136,18 +136,24 @@ export default function CompanyDetailClient({ company: initial, initialTips }: P
       {activeTab==='tips' && (
         <>
           {/* Filters */}
-          <div style={{ display:'flex',gap:8,marginBottom:16,flexWrap:'wrap' }}>
-            {[{id:'all',label:'Todos'},{id:'good',label:'▲ Buenos'},{id:'bad',label:'▼ Malos'}].map(f=>(
-              <button key={f.id} onClick={()=>setFilter(f.id as any)} style={{ padding:'6px 12px',borderRadius:99,fontFamily:'inherit',fontWeight:600,fontSize:12,cursor:'pointer',background:filter===f.id?'var(--red)':'var(--card)',color:filter===f.id?'#fff':'var(--muted2)',border:`1px solid ${filter===f.id?'var(--red)':'var(--border2)'}`,transition:'all .15s' }}>
-                {f.label}
-              </button>
-            ))}
-            <div style={{ width:1,background:'var(--border)',margin:'0 4px' }}/>
-            {[{id:'all',label:'Todo'},{id:'service',label:'⚙ Servicio'},{id:'product',label:'◈ Producto'},{id:'employee',label:'◎ Empleado'}].map(f=>(
-              <button key={f.id} onClick={()=>setSegFilter(f.id as any)} style={{ padding:'6px 12px',borderRadius:99,fontFamily:'inherit',fontWeight:600,fontSize:12,cursor:'pointer',background:segFilter===f.id?'rgba(255,255,255,0.1)':'var(--card)',color:segFilter===f.id?'var(--text)':'var(--muted2)',border:`1px solid ${segFilter===f.id?'rgba(255,255,255,0.2)':'var(--border2)'}`,transition:'all .15s' }}>
-                {f.label}
-              </button>
-            ))}
+          <div style={{ display:'flex',gap:8,marginBottom:16,alignItems:'center' }}>
+            {/* Type toggle */}
+            <div style={{ display:'flex',background:'var(--bg)',borderRadius:99,padding:3,gap:2 }}>
+              {([['all','Todos'],['good','▲ Buenos'],['bad','▼ Malos']] as const).map(([id,label])=>(
+                <button key={id} onClick={()=>setFilter(id)} style={{ padding:'5px 12px',borderRadius:99,border:'none',cursor:'pointer',fontFamily:'inherit',fontWeight:600,fontSize:12,transition:'all .15s',background:filter===id?id==='good'?'var(--green-dim)':id==='bad'?'var(--bad-dim)':'var(--card2)':'transparent',color:filter===id?id==='good'?'var(--green)':id==='bad'?'var(--bad)':'var(--text)':'var(--muted)' }}>
+                  {label}
+                </button>
+              ))}
+            </div>
+            {/* Segment cycle button */}
+            <button onClick={()=>setSegFilter(s=>s==='all'?'service':s==='service'?'product':s==='product'?'employee':'all')} style={{
+              padding:'6px 14px',borderRadius:99,border:'1px solid var(--border2)',cursor:'pointer',
+              fontFamily:'inherit',fontWeight:600,fontSize:12,transition:'all .15s',
+              background:segFilter!=='all'?'rgba(255,255,255,0.08)':'var(--card)',
+              color:segFilter!=='all'?'var(--text)':'var(--muted)',
+            }}>
+              {segFilter==='all'?'⚙◈◎ Segmento':segFilter==='service'?'⚙ Servicio':segFilter==='product'?'◈ Producto':'◎ Empleado'}
+            </button>
           </div>
 
           <div style={{ display:'grid',gridTemplateColumns:'1fr 1fr',gap:14 }}>
