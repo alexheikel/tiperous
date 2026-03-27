@@ -109,6 +109,16 @@ export default function TipCard({ tip, delay=0 }: { tip:Tip; delay?:number }) {
           color:'#fff', fontWeight:700, fontSize:10,
         }}>{name[0].toUpperCase()}</div>
         <div style={{ flex:1, minWidth:0 }}>
+          {(tip as any).company && (
+            <a href={`/c/${(tip as any).company.slug || (tip as any).company_id}`}
+              onClick={e=>e.stopPropagation()}
+              style={{ float:'right', marginLeft:6, textDecoration:'none',
+                color:'var(--muted)', fontSize:10, fontWeight:600,
+                whiteSpace:'nowrap', maxWidth:90, overflow:'hidden', textOverflow:'ellipsis', display:'block',
+              }}>
+              {(tip as any).company.name}
+            </a>
+          )}
           <a href={profile?.username ? `/u/${profile.username}` : '#'} onClick={e=>e.stopPropagation()} style={{
             color:'var(--gold)', fontWeight:700, fontSize:11,
             whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis',
@@ -116,7 +126,7 @@ export default function TipCard({ tip, delay=0 }: { tip:Tip; delay?:number }) {
           }}>{name}</a>
           <div style={{ color:'var(--muted)', fontSize:9 }}>{ago}</div>
         </div>
-        <div style={{ display:'flex', alignItems:'center', gap:6 }}>
+        <div style={{ display:'flex', alignItems:'center', gap:6, flexShrink:0 }}>
           <div style={{
             display:'flex', alignItems:'center', gap:4, padding:'3px 8px', borderRadius:99,
             background:good?'var(--green-dim)':'var(--bad-dim)',
@@ -162,18 +172,7 @@ export default function TipCard({ tip, delay=0 }: { tip:Tip; delay?:number }) {
         </div>
       )}
 
-      {/* Company name link */}
-      {(tip as any).company && (
-        <a href={`/c/${(tip as any).company.slug || (tip as any).company_id}`}
-          onClick={e=>e.stopPropagation()}
-          style={{ display:'inline-flex', alignItems:'center', gap:4, marginBottom:6, textDecoration:'none',
-            color:'var(--muted2)', fontSize:11, fontWeight:600,
-            background:'rgba(255,255,255,0.05)', borderRadius:99, padding:'3px 8px',
-            border:'1px solid rgba(255,255,255,0.08)',
-          }}>
-          🏢 {(tip as any).company.name}
-        </a>
-      )}
+
 
       {/* Product image */}
       {(tip as any).product_image && (

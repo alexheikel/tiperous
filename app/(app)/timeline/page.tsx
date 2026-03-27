@@ -74,11 +74,7 @@ export default function TimelinePage() {
 
   return (
     <div>
-      {/* Header */}
-      <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:16 }}>
-        <h2 style={{ fontFamily:'Playfair Display,serif', fontWeight:900, fontSize:20, margin:0 }}>Timeline</h2>
-        <div className="live-badge"><div className="live-dot"/><span>LIVE</span></div>
-      </div>
+
 
       {/* Type filter */}
       <div style={{ display:'flex', background:'var(--card)', borderRadius:99, padding:3, gap:2, marginBottom:10 }}>
