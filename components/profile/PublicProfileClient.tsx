@@ -52,9 +52,6 @@ export default function PublicProfileClient({ profile, tips, isFollowing: initia
       body: JSON.stringify({ target_id: profile.id }),
       redirect: 'follow',
     })
-    let data = {}
-    try { data = await res.json() } catch(e) {}
-    alert('status:' + res.status + ' ok:' + res.ok + ' data:' + JSON.stringify(data))
     if (res.ok) { setFollowing(!following); setFollowers((prev:number) => following ? prev - 1 : prev + 1) }
     setLoading(false)
   }
