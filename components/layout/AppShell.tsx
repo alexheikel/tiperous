@@ -139,6 +139,15 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
                         {location.city===c.city && <span style={{ marginLeft:'auto',color:'var(--red)' }}>✓</span>}
                       </button>
                     ))}
+                    {citySearch.trim().length > 1 && !filteredCities.find(c=>c.city.toLowerCase()===citySearch.toLowerCase()) && (
+                      <button onClick={()=>{ setLocation({ city:citySearch.trim(), countryCode:'', lat:null, lng:null }); setShowPicker(false) }} style={{
+                        display:'flex',alignItems:'center',gap:8,width:'100%',padding:'9px 12px',borderRadius:9,border:'none',cursor:'pointer',
+                        background:'rgba(232,52,28,0.1)',color:'var(--red)',
+                        fontFamily:'inherit',fontSize:13,fontWeight:700,textAlign:'left',marginTop:4,
+                      }}>
+                        📍 Usar "{citySearch.trim()}"
+                      </button>
+                    )}
                   </div>
                 </div>
               )}
