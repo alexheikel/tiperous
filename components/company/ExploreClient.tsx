@@ -71,7 +71,7 @@ export default function ExploreClient({ initialCompanies }: Props) {
   }
 
   useEffect(() => {
-    if (!nearby || !coords) return
+    if (!coords) return
     async function fetchNearby() {
       const url = new URL('/api/companies', window.location.origin)
       url.searchParams.set('nearby', '1')
