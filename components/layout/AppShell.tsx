@@ -1,7 +1,6 @@
 'use client'
 import { usePathname, useRouter } from 'next/navigation'
 import Link from 'next/link'
-import Image from 'next/image'
 import { useAuth } from '@/hooks/useAuth'
 
 export default function AppShell({ children }: { children: React.ReactNode }) {
@@ -13,7 +12,6 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
   return (
     <div style={{ minHeight:'100dvh', background:'var(--bg)', maxWidth:600, margin:'0 auto', position:'relative' }}>
       <div className="grain-overlay" aria-hidden />
-
       <header style={{
         position:'sticky', top:0, zIndex:100,
         background:'rgba(12,12,14,0.94)', backdropFilter:'blur(24px)',
@@ -23,7 +21,15 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
           <Link href="/" style={{ display:'flex', alignItems:'center', textDecoration:'none' }}>
             <img src="/logo.svg" alt="Tiperous" style={{ height:38, width:'auto' }} />
           </Link>
-          <div style={{ display:'flex', alignItems:'center', gap:10 }}>
+          <div style={{ display:'flex', alignItems:'center', gap:8 }}>
+            {!profile?.is_business && (
+              <Link href="/business/register" style={{
+                padding:'6px 12px', borderRadius:10,
+                background:'transparent', border:'1px solid var(--border2)',
+                color:'var(--muted2)', fontWeight:600, fontSize:12,
+                textDecoration:'none', whiteSpace:'nowrap',
+              }}>Para empresas</Link>
+            )}
             {user ? (
               <Link href="/profile" style={{
                 width:36, height:36, borderRadius:'50%',
@@ -35,9 +41,8 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
                 border: pathname==='/profile' ? '2px solid var(--red)' : '2px solid transparent',
               }}>{initials}</Link>
             ) : (
-              <Link href="/business/register" style={{ padding:'7px 14px', borderRadius:10, background:'transparent', border:'1px solid var(--border2)', color:'var(--muted2)', fontWeight:600, fontSize:12, textDecoration:'none', marginRight:6 }}>Para empresas</Link>
               <Link href="/login" style={{
-                padding:'7px 18px', borderRadius:10,
+                padding:'7px 16px', borderRadius:10,
                 background:'linear-gradient(135deg,#e8341c,#a82010)',
                 color:'#fff', fontWeight:700, fontSize:13,
                 textDecoration:'none', boxShadow:'0 2px 10px rgba(232,52,28,0.3)',
@@ -46,18 +51,14 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
           </div>
         </div>
       </header>
-
       <main style={{ padding:'20px 18px 100px' }}>{children}</main>
-
       <nav style={{
-        position:'fixed', bottom:0,
-        left:'50%', transform:'translateX(-50%)',
+        position:'fixed', bottom:0, left:'50%', transform:'translateX(-50%)',
         width:'100%', maxWidth:600,
         background:'rgba(12,12,14,0.96)', backdropFilter:'blur(24px)',
-        borderTop:'1px solid var(--border)',
-        display:'flex', zIndex:200,
+        borderTop:'1px solid var(--border)', display:'flex', zIndex:200,
       }}>
-        <NavBtn href="/"         active={pathname==='/'         } label="Explore"  icon={<SearchIcon  active={pathname==='/'         }/>} />
+        <NavBtn href="/"         active={pathname==='/'         } label="Explore"  icon={<SearchIcon active={pathname==='/'         }/>} />
         <div style={{ flex:1, display:'flex', justifyContent:'center', alignItems:'center', flexDirection:'column', padding:'8px 0 12px' }}>
           <button onClick={() => { if (!user) { router.push('/login'); return } router.push('/tip') }} style={{
             width:54, height:54, borderRadius:'50%',
@@ -65,14 +66,14 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
             color:'#fff', fontSize:24, border:'3px solid var(--bg)', cursor:'pointer',
             display:'flex', alignItems:'center', justifyContent:'center',
             marginTop:-24, boxShadow:'0 4px 24px rgba(232,52,28,0.55)',
-            transition:'transform .15s, box-shadow .15s',
+            transition:'transform .15s',
           }}
             onMouseEnter={e=>(e.currentTarget.style.transform='scale(1.08)')}
             onMouseLeave={e=>(e.currentTarget.style.transform='scale(1)')}
           >★</button>
           <span style={{ fontSize:11, fontWeight:600, color:'var(--muted)', marginTop:2 }}>Tip</span>
         </div>
-        <NavBtn href="/timeline" active={pathname==='/timeline' } label="Timeline" icon={<ClockIcon   active={pathname==='/timeline' }/>} />
+        <NavBtn href="/timeline" active={pathname==='/timeline' } label="Timeline" icon={<ClockIcon  active={pathname==='/timeline' }/>} />
       </nav>
     </div>
   )
@@ -81,8 +82,8 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
 function NavBtn({ href, active, label, icon }: { href:string; active:boolean; label:string; icon:React.ReactNode }) {
   return (
     <Link href={href} style={{
-      flex:1, padding:'14px 0 14px', display:'flex', flexDirection:'column', alignItems:'center', gap:3,
-      textDecoration:'none', color: active ? 'var(--red)' : 'var(--muted)', transition:'color .15s',
+      flex:1, padding:'14px 0', display:'flex', flexDirection:'column', alignItems:'center', gap:3,
+      textDecoration:'none', color:active?'var(--red)':'var(--muted)', transition:'color .15s',
     }}>
       {icon}
       <span style={{ fontSize:11, fontWeight:600 }}>{label}</span>
