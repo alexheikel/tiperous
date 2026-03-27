@@ -94,7 +94,7 @@ export default function CompanyDetailClient({ company: initial, initialTips }: P
             <div className="live-badge">
               <div className="live-dot"/><span>LIVE</span>
             </div>
-            <button onClick={()=>setQrOpen(true)} style={{
+            <button onClick={()=>{ console.log('slug:', (company as any).slug); setQrOpen(true) }} style={{
               background:'rgba(255,255,255,0.08)', border:'1px solid rgba(255,255,255,0.12)',
               borderRadius:99, padding:'5px 12px', cursor:'pointer',
               color:'rgba(255,255,255,0.7)', fontSize:11, fontWeight:700, fontFamily:'inherit',
@@ -140,7 +140,7 @@ export default function CompanyDetailClient({ company: initial, initialTips }: P
       </div>
 
       {showTip && <AddTipModal company={company} onClose={()=>setShowTip(false)} onSuccess={()=>setShowTip(false)}/>}
-      {qrOpen && (company as any).slug && <QRModal companyName={company.name} companySlug={(company as any).slug} onClose={()=>setQrOpen(false)}/>}
+      {qrOpen && <QRModal companyName={company.name} companySlug={(company as any).slug || ''} onClose={()=>setQrOpen(false)}/>}
     </div>
   )
 }
