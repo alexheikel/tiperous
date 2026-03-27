@@ -99,7 +99,7 @@ export default function AddTipModal({ company, onClose, onSuccess }: Props) {
     })
     const data = await res.json()
     if (!res.ok) { setError(data.error||'Error al enviar.'); setLoading(false); return }
-    setSubmittedTipId(data?.data?.id || null); setSubmitted(true); setLoading(false); setShowShare(true)
+    setTipId(data?.data?.id || null); setSubmitted(true); setLoading(false); setShowShare(true)
   }
 
   if (!user) return (
