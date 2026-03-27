@@ -25,6 +25,7 @@ export default function AddTipModal({ company, onClose, onSuccess }: Props) {
   const [loading,    setLoading]    = useState(false)
   const [submitted,  setSubmitted]  = useState(false)
   const [showShare,  setShowShare]  = useState(false)
+  const [tipId, setTipId] = useState<string|null>(null)
 
   // Entity search
   const [entities,      setEntities]      = useState<Entity[]>([])
@@ -124,7 +125,7 @@ export default function AddTipModal({ company, onClose, onSuccess }: Props) {
           <button onClick={onSuccess} style={{ ...ghostBtn,marginTop:10 }}>Listo</button>
         </div>
       </Overlay>
-      {showShare && <ShareCard companyName={company.name} companyScore={company.score_total} tipType={type} tipSegment={seg} tipText={text} userName={user?.email?.split('@')[0]||'Anónimo'} onClose={()=>setShowShare(false)}/>}
+      {showShare && <ShareCard companyName={company.name} companyScore={company.score_total} tipType={type} tipSegment={seg} tipText={text} userName={user?.email?.split('@')[0]||'Anónimo'} tipId={tipId||undefined} onClose={()=>setShowShare(false)}/>}
     </>
   )
 
