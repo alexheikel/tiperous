@@ -35,6 +35,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
                 border: pathname==='/profile' ? '2px solid var(--red)' : '2px solid transparent',
               }}>{initials}</Link>
             ) : (
+              <Link href="/business/register" style={{ padding:'7px 14px', borderRadius:10, background:'transparent', border:'1px solid var(--border2)', color:'var(--muted2)', fontWeight:600, fontSize:12, textDecoration:'none', marginRight:6 }}>Para empresas</Link>
               <Link href="/login" style={{
                 padding:'7px 18px', borderRadius:10,
                 background:'linear-gradient(135deg,#e8341c,#a82010)',
