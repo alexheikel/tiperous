@@ -183,13 +183,13 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
         </div>
       </header>
 
-      <main style={{ padding:'20px 18px 110px' }}>{children}</main>
+      <main style={{ padding:'16px 14px 120px' }}>{children}</main>
 
       {/* Liquid Glass Bottom Nav */}
       <nav style={{
         position:'fixed', bottom:0, left:'50%', transform:'translateX(-50%)',
         width:'100%', maxWidth:600, zIndex:200,
-        padding:'0 0 env(safe-area-inset-bottom)',
+        paddingBottom:'max(12px, env(safe-area-inset-bottom))',
       }}>
         {/* Glass pill */}
         <div style={{
