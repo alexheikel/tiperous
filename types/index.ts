@@ -19,7 +19,10 @@ export interface Profile {
   business_verified: boolean | null
   stripe_customer_id: string | null
   stripe_payment_id:  string | null
-  followers_count: number | null
+  followers_count:   number | null
+  good_tips_count:   number | null
+  bad_tips_count:    number | null
+  reports_received:  number | null
   following_count: number | null
   tips_count:      number | null
   created_at: string
