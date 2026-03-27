@@ -108,14 +108,70 @@ export default function ExploreClient({ initialCompanies }: Props) {
         </div>}
       </div>
 
-      {/* Sort toggle */}
-      <div style={{ display:'flex', gap:8, marginBottom:16 }}>
+      {/* Category + Sort filters */}
+      <div style={{ display:'flex', gap:7, marginBottom:16, overflowX:'auto', paddingBottom:2, scrollbarWidth:'none' }}>
+        <button onClick={()=>setCategory('ALL')} style={{
+          padding:'6px 13px', borderRadius:99, fontFamily:'inherit', fontWeight:600, fontSize:12, cursor:'pointer',
+          background: category==='ALL' ? 'var(--red)' : 'var(--card)',
+          color: category==='ALL' ? '#fff' : 'var(--muted2)',
+          border:`1px solid ${category==='ALL'?'var(--red)':'var(--border2)'}`,
+          transition:'all .15s', whiteSpace:'nowrap', flexShrink:0,
+        }}>{category==='ALL' && '✓ '}Todas</button>
+        <button onClick={()=>setCategory('Food')} style={{
+          padding:'6px 13px', borderRadius:99, fontFamily:'inherit', fontWeight:600, fontSize:12, cursor:'pointer',
+          background: category==='Food' ? 'var(--red)' : 'var(--card)',
+          color: category==='Food' ? '#fff' : 'var(--muted2)',
+          border:`1px solid ${category==='Food'?'var(--red)':'var(--border2)'}`,
+          transition:'all .15s', whiteSpace:'nowrap', flexShrink:0,
+        }}>{category==='Food' && '✓ '}Food</button>
+        <button onClick={()=>setCategory('Technology')} style={{
+          padding:'6px 13px', borderRadius:99, fontFamily:'inherit', fontWeight:600, fontSize:12, cursor:'pointer',
+          background: category==='Technology' ? 'var(--red)' : 'var(--card)',
+          color: category==='Technology' ? '#fff' : 'var(--muted2)',
+          border:`1px solid ${category==='Technology'?'var(--red)':'var(--border2)'}`,
+          transition:'all .15s', whiteSpace:'nowrap', flexShrink:0,
+        }}>{category==='Technology' && '✓ '}Technology</button>
+        <button onClick={()=>setCategory('Retail')} style={{
+          padding:'6px 13px', borderRadius:99, fontFamily:'inherit', fontWeight:600, fontSize:12, cursor:'pointer',
+          background: category==='Retail' ? 'var(--red)' : 'var(--card)',
+          color: category==='Retail' ? '#fff' : 'var(--muted2)',
+          border:`1px solid ${category==='Retail'?'var(--red)':'var(--border2)'}`,
+          transition:'all .15s', whiteSpace:'nowrap', flexShrink:0,
+        }}>{category==='Retail' && '✓ '}Retail</button>
+        <button onClick={()=>setCategory('Finance')} style={{
+          padding:'6px 13px', borderRadius:99, fontFamily:'inherit', fontWeight:600, fontSize:12, cursor:'pointer',
+          background: category==='Finance' ? 'var(--red)' : 'var(--card)',
+          color: category==='Finance' ? '#fff' : 'var(--muted2)',
+          border:`1px solid ${category==='Finance'?'var(--red)':'var(--border2)'}`,
+          transition:'all .15s', whiteSpace:'nowrap', flexShrink:0,
+        }}>{category==='Finance' && '✓ '}Finance</button>
+        <button onClick={()=>setCategory('Health')} style={{
+          padding:'6px 13px', borderRadius:99, fontFamily:'inherit', fontWeight:600, fontSize:12, cursor:'pointer',
+          background: category==='Health' ? 'var(--red)' : 'var(--card)',
+          color: category==='Health' ? '#fff' : 'var(--muted2)',
+          border:`1px solid ${category==='Health'?'var(--red)':'var(--border2)'}`,
+          transition:'all .15s', whiteSpace:'nowrap', flexShrink:0,
+        }}>{category==='Health' && '✓ '}Health</button>
+        <button onClick={()=>setCategory('Entertainment')} style={{
+          padding:'6px 13px', borderRadius:99, fontFamily:'inherit', fontWeight:600, fontSize:12, cursor:'pointer',
+          background: category==='Entertainment' ? 'var(--red)' : 'var(--card)',
+          color: category==='Entertainment' ? '#fff' : 'var(--muted2)',
+          border:`1px solid ${category==='Entertainment'?'var(--red)':'var(--border2)'}`,
+          transition:'all .15s', whiteSpace:'nowrap', flexShrink:0,
+        }}>{category==='Entertainment' && '✓ '}Entertainment</button>
+        <button onClick={()=>setCategory('Transport')} style={{
+          padding:'6px 13px', borderRadius:99, fontFamily:'inherit', fontWeight:600, fontSize:12, cursor:'pointer',
+          background: category==='Transport' ? 'var(--red)' : 'var(--card)',
+          color: category==='Transport' ? '#fff' : 'var(--muted2)',
+          border:`1px solid ${category==='Transport'?'var(--red)':'var(--border2)'}`,
+          transition:'all .15s', whiteSpace:'nowrap', flexShrink:0,
+        }}>{category==='Transport' && '✓ '}Transport</button>
         <button onClick={()=>setSortChrono(!sortChrono)} style={{
-          padding:'6px 12px', borderRadius:99, fontFamily:'inherit', fontWeight:600, fontSize:12, cursor:'pointer',
-          background: sortChrono ? 'var(--red)' : 'var(--card)',
-          color: sortChrono ? '#fff' : 'var(--muted2)',
-          border:`1px solid ${sortChrono?'var(--red)':'var(--border2)'}`,
-          transition:'all .15s',
+          padding:'6px 13px', borderRadius:99, fontFamily:'inherit', fontWeight:600, fontSize:12, cursor:'pointer',
+          background: sortChrono ? 'rgba(255,255,255,0.1)' : 'var(--card)',
+          color: sortChrono ? 'var(--text)' : 'var(--muted2)',
+          border:'1px solid var(--border2)',
+          transition:'all .15s', whiteSpace:'nowrap', flexShrink:0,
         }}>
           {sortChrono ? '🕐 Recientes' : '⭐ Top score'}
         </button>
