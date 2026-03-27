@@ -92,10 +92,13 @@ export default function ExploreClient({ initialCompanies }: Props) {
   function handleCompanyClick(company: any) {
     if (company._source==='google') {
       fetch('/api/companies', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ google_place_id:company.google_place_id }) })
-        .then(r=>r.json()).then(({ data }) => { if (data?.id) router.push(`/c/${data.slug||data.id}`) })
+        .then(r=>r.json()).then(({ data }) => {
+          if (data?.id) router.push(data.slug ? `/c/${data.slug}` : `/company/${data.id}`)
+        })
       return
     }
-    router.push((company as any).slug ? `/c/${(company as any).slug}` : `/company/${company.id}`)
+    const slug = (company as any).slug
+    router.push(slug ? `/c/${slug}` : `/company/${company.id}`)
   }
 
   return (
