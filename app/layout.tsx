@@ -24,6 +24,14 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="es" className={`${playfair.variable} ${dmSans.variable}`}>
+      <head>
+        <link rel="manifest" href="/manifest.json"/>
+        <meta name="apple-mobile-web-app-capable" content="yes"/>
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+        <meta name="apple-mobile-web-app-title" content="Tiperous"/>
+        <link rel="apple-touch-icon" href="/icon-512.png"/>
+        <meta name="theme-color" content="#e8341c"/>
+      </head>
       <body>{children}</body>
     </html>
   )
