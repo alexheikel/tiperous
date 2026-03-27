@@ -148,7 +148,7 @@ export default function TimelinePage() {
       )}
 
       {!loading && visible.length > 0 && (
-        <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:14 }}>
+        <div style={{ display:'grid', gridTemplateColumns:'calc(50% - 5px) calc(50% - 5px)', gap:10, width:'100%' }}>
           <div>
             {typeFilter!=='bad' && <>
               <div style={{ color:'var(--green)',fontWeight:700,fontSize:11,letterSpacing:1,marginBottom:10 }}>
