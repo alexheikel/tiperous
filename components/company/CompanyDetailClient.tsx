@@ -188,7 +188,7 @@ export default function CompanyDetailClient({ company: initial, initialTips }: P
                           rows={2} style={{ width:'100%', padding:'8px 10px', borderRadius:10, background:'var(--card)', border:'1px solid var(--border2)', color:'var(--text)', fontSize:13, resize:'none', outline:'none', fontFamily:'inherit', marginBottom:8 }}
                           autoFocus
                         />
-                        <div style={{ display:'flex', gap:8' }}>
+                        <div style={{ display:'flex', gap:8 }}>
                           <button onClick={()=>submitReply(t.id)} disabled={replyLoading||!replyText.trim()} style={{ padding:'7px 14px', borderRadius:99, background:'var(--red)', color:'#fff', border:'none', cursor:'pointer', fontFamily:'inherit', fontWeight:700, fontSize:12 }}>
                             {replyLoading ? '…' : 'Responder ✓'}
                           </button>
