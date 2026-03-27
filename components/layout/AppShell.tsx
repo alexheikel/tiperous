@@ -41,15 +41,24 @@ export function useLocation() {
   }
 
   function resetToGPS() {
-    if (!navigator.geolocation) return
+    if (!navigator.geolocation) { alert('Tu navegador no soporta GPS'); return }
     setDetecting(true)
-    navigator.geolocation.getCurrentPosition(async pos => {
-      const res  = await fetch(`/api/detect-location?lat=${pos.coords.latitude}&lng=${pos.coords.longitude}`)
-      const data = await res.json()
-      const loc: LocationState = { city:data.city, countryCode:data.countryCode, lat:pos.coords.latitude, lng:pos.coords.longitude }
-      setLocation(loc)
-      setDetecting(false)
-    }, ()=>setDetecting(false))
+    navigator.geolocation.getCurrentPosition(
+      async pos => {
+        try {
+          const r = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${pos.coords.latitude}&lon=${pos.coords.longitude}&format=json&accept-language=es`)
+          const d = await r.json()
+          const city = d.address?.city || d.address?.town || d.address?.village || d.address?.county || 'Mi ubicación'
+          const cc   = (d.address?.country_code || 'other').toUpperCase()
+          setLocation({ city, countryCode:cc, lat:pos.coords.latitude, lng:pos.coords.longitude })
+        } catch {
+          setLocation({ city:'Mi ubicación', countryCode:'OTHER', lat:pos.coords.latitude, lng:pos.coords.longitude })
+        }
+        setDetecting(false)
+      },
+      () => { setDetecting(false); alert('No pudimos acceder a tu ubicación. Verificá los permisos.') },
+      { enableHighAccuracy:false, timeout:10000, maximumAge:60000 }
+    )
   }
 
   return { location, setLocation, resetToGPS, detecting }
