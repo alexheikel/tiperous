@@ -103,8 +103,8 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
         borderBottom:'1px solid var(--border)',
       }}>
         <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', padding:'10px 18px' }}>
-          <Link href="/" style={{ display:'flex', alignItems:'center', textDecoration:'none' }}>
-            <img src="/logo.svg" alt="Tiperous" style={{ height:36, width:'auto' }} />
+          <Link href="/" style={{ textDecoration:'none' }}>
+            <span style={{ fontFamily:"var(--font-pacifico), Pacifico, cursive", fontSize:32, color:"#e8341c", letterSpacing:-1, lineHeight:1 }}>Tiperous.</span>
           </Link>
 
           <div style={{ display:'flex', alignItems:'center', gap:8 }}>
