@@ -5,6 +5,7 @@ import type { Company, Tip } from '@/types'
 import { useRealtimeTips, useRealtimeCompany } from '@/hooks/useRealtime'
 import AddTipModal from '@/components/tips/AddTipModal'
 import TipCard from '@/components/tips/TipCard'
+import QRModal from '@/components/company/QRModal'
 
 const SEGS = ['service','product','employee'] as const
 const SEG_ICON  = { service:'⚙', product:'◈', employee:'◎' }
@@ -15,6 +16,7 @@ interface Props { company: Company; initialTips: Tip[] }
 export default function CompanyDetailClient({ company: initial, initialTips }: Props) {
   const router    = useRouter()
   const [showTip, setShowTip] = useState(false)
+  const [qrOpen,   setQrOpen]   = useState(false)
   const company   = useRealtimeCompany(initial.id) || initial
   const { tips }  = useRealtimeTips(initial.id)
   const allTips   = tips.length > 0 ? tips : initialTips
@@ -126,6 +128,7 @@ export default function CompanyDetailClient({ company: initial, initialTips }: P
       </div>
 
       {showTip && <AddTipModal company={company} onClose={()=>setShowTip(false)} onSuccess={()=>setShowTip(false)}/>}
+      {qrOpen && (company as any).slug && <QRModal companyName={company.name} companySlug={(company as any).slug} onClose={()=>setQrOpen(false)}/>}
     </div>
   )
 }
