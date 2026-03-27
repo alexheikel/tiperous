@@ -23,12 +23,12 @@ export default function CompanyDetailClient({ company: initial, initialTips }: P
   const [segFilter, setSegFilter] = useState<'all'|'service'|'product'|'employee'>('all')
   const [activeTab, setActiveTab] = useState<'tips'|'employees'|'products'>('tips')
   const [claimedIds,  setClaimedIds]  = useState<string[]>([])
-  const isBusinessOwner = profile?.is_business && profile?.business_verified && (claimedIds.includes(company.id) || claimedIds.length === 0)
   const [replyTipId, setReplyTipId] = useState<string|null>(null)
   const [replyText,  setReplyText]  = useState('')
   const [replyLoading, setReplyLoading] = useState(false)
 
   const company  = useRealtimeCompany(initial.id) || initial
+  const isBusinessOwner = profile?.is_business && profile?.business_verified && (claimedIds.includes(company.id) || claimedIds.length === 0)
   const { tips } = useRealtimeTips(initial.id)
   const allTips  = tips.length > 0 ? tips : initialTips
   const s        = company.score_total
