@@ -30,14 +30,18 @@ export default function TimelinePage() {
   const [followingIds, setFollowingIds] = useState<string[]>([])
 
   useEffect(() => {
-    fetch('/api/me').then(r=>r.json()).then(d => {
-      if (d.user) {
-        setCurrentUserId(d.user.id)
-        fetch(`/api/follow/list?user_id=${d.user.id}`)
-          .then(r=>r.json())
-          .then(d => setFollowingIds(d.data?.map((f:any)=>f.following_id)||[]))
-      }
-    }).catch(()=>{})
+    import('@/lib/supabase/client').then(({ createClient }) => {
+      const supabase = createClient()
+      supabase.auth.getUser().then(({ data: { user } }) => {
+        if (!user) return
+        setCurrentUserId(user.id)
+        supabase.from('follows').select('following_id').eq('follower_id', user.id)
+          .then(({ data }) => {
+            const ids = (data||[]).map((f:any) => f.following_id)
+            setFollowingIds(ids)
+          })
+      })
+    })
   }, [followingOnly])
 
   // Cache profiles for level filtering
