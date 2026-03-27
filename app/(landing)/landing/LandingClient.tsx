@@ -64,9 +64,9 @@ export default function LandingClient({ stats, topCompanies, recentTips }: Props
         </div>
 
         {/* 3D Phone mockup */}
-        <div style={{ perspective:1200, margin:'0 auto 52px', width:280, height:420 }}>
+        <div style={{ perspective:1200, margin:'0 auto 52px', width:320, height:520 }}>
           <div style={{
-            width:240, height:480, margin:'0 auto',
+            width:250, height:500, margin:'0 auto',
             transform:'rotateY(-18deg) rotateX(6deg)',
             transformStyle:'preserve-3d', overflow:'visible',
             transition:'transform .6s ease',
@@ -75,7 +75,7 @@ export default function LandingClient({ stats, topCompanies, recentTips }: Props
             onMouseLeave={e=>(e.currentTarget.style.transform='rotateY(-18deg) rotateX(6deg)')}
           >
             {/* Phone shell */}
-            <div style={{ width:240, height:480, borderRadius:44, background:'#18181b', border:'8px solid #27272a', boxShadow:'20px 20px 60px rgba(0,0,0,0.7), -4px -4px 20px rgba(255,255,255,0.04), inset 0 0 0 1px rgba(255,255,255,0.06)', position:'relative', overflow:'hidden' }}>
+            <div style={{ width:250, height:500, borderRadius:44, background:'#18181b', border:'8px solid #27272a', boxShadow:'20px 20px 60px rgba(0,0,0,0.7), -4px -4px 20px rgba(255,255,255,0.04), inset 0 0 0 1px rgba(255,255,255,0.06)', position:'relative', overflow:'hidden' }}>
 
               {/* Dynamic island */}
               <div style={{ position:'absolute', top:10, left:'50%', transform:'translateX(-50%)', width:80, height:22, borderRadius:14, background:'#000', zIndex:10 }}/>
