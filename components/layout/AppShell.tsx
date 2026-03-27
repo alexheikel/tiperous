@@ -120,7 +120,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
                 }}>
                   <input value={citySearch} onChange={e=>setCitySearch(e.target.value)}
                     placeholder="Buscar ciudad…" autoFocus
-                    style={{ width:'100%',padding:'8px 12px',borderRadius:10,background:'rgba(255,255,255,0.06)',border:'1px solid rgba(255,255,255,0.1)',color:'var(--text)',fontSize:13,outline:'none',fontFamily:'inherit',marginBottom:6,boxSizing:'border-box' }}/>
+                    style={{ width:'100%',padding:'8px 12px',borderRadius:10,background:'rgba(255,255,255,0.06)',border:'1px solid rgba(255,255,255,0.1)',color:'var(--text)',fontSize:16,outline:'none',fontFamily:'inherit',marginBottom:6,boxSizing:'border-box' }}/>
                   <button onClick={()=>{ resetToGPS(); setShowPicker(false) }} style={{
                     display:'flex',alignItems:'center',gap:8,width:'100%',padding:'8px 12px',borderRadius:9,border:'none',cursor:'pointer',
                     background:'rgba(232,52,28,0.12)',color:'var(--red)',fontFamily:'inherit',fontSize:13,fontWeight:700,marginBottom:4,textAlign:'left',
