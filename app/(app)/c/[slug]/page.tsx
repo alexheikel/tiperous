@@ -4,11 +4,39 @@ import CompanyDetailClient from '@/components/company/CompanyDetailClient'
 
 export async function generateMetadata({ params }: { params: { slug: string } }) {
   const supabase = createClient()
-  const { data } = await supabase.from('companies').select('name,category,city').eq('slug', params.slug).single()
-  if (!data) return { title: 'Empresa no encontrada' }
+  const { data: c } = await supabase
+    .from('companies')
+    .select('name,category,city,country,score_total,tips_count,score_service,score_product,score_employee')
+    .eq('slug', params.slug).single()
+  if (!c) return { title: 'Empresa no encontrada — Tiperous' }
+
+  const score    = c.score_total || 0
+  const scoreStr = score > 0 ? `+${score}` : String(score)
+  const city     = c.city ? ` en ${c.city}` : ''
+  const tips     = c.tips_count || 0
+  const desc     = `${c.name}${city} tiene un score de ${scoreStr} con ${tips} tip${tips!==1?'s':''}. ${score>=0?'La comunidad la recomienda.':'La comunidad no la recomienda.'} Leé opiniones honestas sobre servicio, productos y empleados.`
+
   return {
-    title: `${data.name} — Tiperous`,
-    description: `Tips y reseñas de ${data.name}${data.city ? ` en ${data.city}` : ''}`,
+    title: `${c.name} — ${scoreStr} puntos | Tiperous`,
+    description: desc,
+    openGraph: {
+      title: `${c.name} ${score>=0?'▲':'▼'} ${scoreStr} | Tiperous`,
+      description: desc,
+      url: `https://tipero.us/c/${params.slug}`,
+      type: 'website',
+      images: [{
+        url: `https://tipero.us/api/og/company?slug=${params.slug}`,
+        width: 1200, height: 630,
+        alt: `${c.name} en Tiperous`,
+      }],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: `${c.name} ${score>=0?'▲':'▼'} ${scoreStr} | Tiperous`,
+      description: desc,
+      images: [`https://tipero.us/api/og/company?slug=${params.slug}`],
+    },
+    alternates: { canonical: `https://tipero.us/c/${params.slug}` },
   }
 }
 
