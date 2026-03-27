@@ -27,6 +27,11 @@ export async function middleware(request: NextRequest) {
   // Refresh session (required — do not remove)
   const { data: { user } } = await supabase.auth.getUser()
 
+  // Redirect logged out users from / to /landing
+  if (request.nextUrl.pathname === '/' && !user) {
+    return NextResponse.redirect(new URL('/landing', request.url))
+  }
+
   // Protect profile route
   if (request.nextUrl.pathname.startsWith('/profile') && !user) {
     return NextResponse.redirect(new URL('/login', request.url))
