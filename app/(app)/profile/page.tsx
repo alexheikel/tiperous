@@ -28,21 +28,15 @@ export default function ProfilePage() {
 
   useEffect(() => {
     if (!user) return
-    supabase.rpc('get_user_countries', { uid: user.id })
-      .then(({ data }) => {
-        if (data) setCountries(data.map((r:any) => r.country).filter(Boolean))
-      })
-      .catch(() => {
-        // Fallback: direct query
-        supabase.from('tips').select('company_id').eq('user_id', user.id)
-          .then(({ data: tips }) => {
-            if (!tips?.length) return
-            const ids = tips.map(t => t.company_id)
-            supabase.from('companies').select('country').in('id', ids)
-              .then(({ data: companies }) => {
-                const flags = [...new Set(companies?.map(c=>c.country).filter(Boolean))]
-                setCountries(flags as string[])
-              })
+    // Fetch countries via tips → companies
+    supabase.from('tips').select('company_id').eq('user_id', user.id)
+      .then(({ data: tips }) => {
+        if (!tips?.length) return
+        const ids = [...new Set(tips.map(t => t.company_id))]
+        supabase.from('companies').select('country').in('id', ids)
+          .then(({ data: companies }) => {
+            const flags = [...new Set((companies||[]).map((c:any)=>c.country).filter(Boolean))]
+            setCountries(flags as string[])
           })
       })
   }, [user])
