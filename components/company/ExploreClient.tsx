@@ -289,14 +289,13 @@ function ScoreCol({ c, i, color, onClick }: { c:Company; i:number; color:string;
           const v = (c as any)[key] as number || 0
           return (
             <div key={key} style={{
-              display:'flex', alignItems:'center', gap:3,
-              padding:'3px 7px', borderRadius:99, fontSize:10,
+              display:'inline-flex', alignItems:'center', gap:2,
+              padding:'3px 6px', borderRadius:99, fontSize:10,
               background: v>0?'var(--green-dim)':v<0?'var(--bad-dim)':'rgba(255,255,255,0.04)',
               border:`1px solid ${v>0?'rgba(29,185,84,0.2)':v<0?'rgba(232,52,28,0.2)':'var(--border)'}`,
             }}>
-              <span style={{ color:'var(--muted)' }}>{icon}</span>
+              <span style={{ fontSize:9 }}>{icon}</span>
               <span style={{ fontWeight:700, color:v>0?'var(--green)':v<0?'var(--bad)':'var(--muted2)' }}>{v>0?'+':''}{v}</span>
-              <span style={{ color:'var(--muted)' }}>{label}</span>
             </div>
           )
         })}
