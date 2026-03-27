@@ -235,7 +235,7 @@ export default function ExploreClient({ initialCompanies }: Props) {
           </div>
 
           {!sortChrono && (best.length>0||worst.length>0) && (
-            <div style={{ display:'grid',gridTemplateColumns:'1fr 1fr',gap:14,marginBottom:20 }}>
+            <div style={{ display:'grid',gridTemplateColumns:'1fr 1fr',gap:10,marginBottom:20,overflow:'hidden' }}>
               <div>
                 <SLabel color="var(--green)">▲ Mejores</SLabel>
                 <div style={{ overflowY:'auto',maxHeight:360 }}>
