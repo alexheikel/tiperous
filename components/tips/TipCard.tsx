@@ -178,15 +178,14 @@ export default function TipCard({ tip, delay=0 }: { tip:Tip; delay?:number }) {
       <div style={{ display:'flex', alignItems:'center', gap:8 }}>
         <button onClick={toggleComments} style={{
           display:'inline-flex', alignItems:'center', gap:5,
-          padding:'4px 10px', borderRadius:99,
+          padding:'5px 10px', borderRadius:99,
           background:showComments?'rgba(232,52,28,0.12)':'var(--card2)',
           border:`1px solid ${showComments?'rgba(232,52,28,0.25)':'var(--border)'}`,
           color:showComments?'var(--red)':'var(--muted)',
-          fontFamily:'inherit', fontWeight:600, fontSize:11, cursor:'pointer', transition:'all .15s',
+          fontFamily:'inherit', fontWeight:600, fontSize:12, cursor:'pointer', transition:'all .15s',
         }}>
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-          {count>0?count:''} {count===1?'comentario':'comentarios'}
-          {count===0&&!showComments&&<span style={{ color:'var(--muted)',fontWeight:400 }}>— comentar</span>}
+          <svg width="13" height="13" viewBox="0 0 24 24" fill={showComments?"currentColor":"none"} stroke="currentColor" strokeWidth="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          {count > 0 ? count : ''}
         </button>
         <button onClick={()=>navigator.clipboard.writeText(`https://tipero.us/t/${tip.id}`)} style={{
           display:'inline-flex', alignItems:'center', gap:4,
