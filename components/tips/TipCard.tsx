@@ -109,16 +109,6 @@ export default function TipCard({ tip, delay=0 }: { tip:Tip; delay?:number }) {
           color:'#fff', fontWeight:700, fontSize:10,
         }}>{name[0].toUpperCase()}</div>
         <div style={{ flex:1, minWidth:0 }}>
-          {(tip as any).company && (
-            <a href={`/c/${(tip as any).company.slug || (tip as any).company_id}`}
-              onClick={e=>e.stopPropagation()}
-              style={{ float:'right', marginLeft:6, textDecoration:'none',
-                color:'var(--muted)', fontSize:10, fontWeight:600,
-                whiteSpace:'nowrap', maxWidth:90, overflow:'hidden', textOverflow:'ellipsis', display:'block',
-              }}>
-              {(tip as any).company.name}
-            </a>
-          )}
           <a href={profile?.username ? `/u/${profile.username}` : '#'} onClick={e=>e.stopPropagation()} style={{
             color:'var(--gold)', fontWeight:700, fontSize:11,
             whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis',
@@ -185,7 +175,17 @@ export default function TipCard({ tip, delay=0 }: { tip:Tip; delay?:number }) {
       {(tip as any).employee_name   && <div style={{ fontSize:12,color:'var(--muted2)',fontWeight:600,marginBottom:4 }}>◎ {(tip as any).employee_name}</div>}
       {(tip as any).service_location && <div style={{ fontSize:11,color:'var(--muted)',marginBottom:4 }}>📍 {(tip as any).service_location}</div>}
 
-      <p style={{ color:'var(--text)', fontSize:12, lineHeight:1.5, margin:'0 0 8px' }}>{tip.text}</p>
+      <p style={{ color:'var(--text)', fontSize:12, lineHeight:1.5, margin:'0 0 6px' }}>{tip.text}</p>
+      {(tip as any).company && (
+        <a href={`/c/${(tip as any).company.slug || (tip as any).company_id}`}
+          onClick={e=>e.stopPropagation()}
+          style={{ display:'inline-flex', alignItems:'center', gap:4, marginBottom:8,
+            textDecoration:'none', color:'var(--muted)', fontSize:11,
+          }}>
+          <span style={{ color:'rgba(255,255,255,0.15)' }}>en</span>
+          <span style={{ color:'var(--red)', fontWeight:600 }}>{(tip as any).company.name}</span>
+        </a>
+      )}
 
       {/* Actions */}
       <div style={{ display:'flex', alignItems:'center', gap:8 }}>
