@@ -26,7 +26,15 @@ export default function TipPage() {
       setSearching(true)
       const url = new URL('/api/companies/search', window.location.origin)
       url.searchParams.set('q', query)
-      if (coords) { url.searchParams.set('lat', String(coords.lat)); url.searchParams.set('lng', String(coords.lng)) }
+      const savedLoc = localStorage.getItem('tiperous_location')
+      const locData = savedLoc ? JSON.parse(savedLoc) : null
+      if (locData?.lat) {
+        url.searchParams.set('lat', String(locData.lat))
+        url.searchParams.set('lng', String(locData.lng))
+      } else if (coords) {
+        url.searchParams.set('lat', String(coords.lat))
+        url.searchParams.set('lng', String(coords.lng))
+      }
       const res  = await fetch(url)
       const data = await res.json()
       setResults(data.data || { local:[], google:[] })
