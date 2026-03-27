@@ -71,8 +71,8 @@ export default function AddTipModal({ company, onClose, onSuccess }: Props) {
   async function handleSubmit() {
     if (text.trim().length < 3) { setError('El tip debe tener al menos 3 caracteres.'); return }
     if (text.trim().length > MAX) { setError(`Máximo ${MAX} caracteres.`); return }
-    if (seg==='employee' && !empName.trim()) { setError('Ingresá el nombre del empleado.'); return }
-    if (seg==='service' && !location.trim()) { setError('Ingresá la ubicación o URL del servicio.'); return }
+    // employee name optional
+    // service location optional
 
     setLoading(true); setError('')
 
@@ -123,7 +123,7 @@ export default function AddTipModal({ company, onClose, onSuccess }: Props) {
       {/* Extra field — Employee name */}
       {seg==='employee' && (
         <input value={empName} onChange={e=>setEmpName(e.target.value)}
-          placeholder="Nombre del empleado *"
+          placeholder="Nombre del empleado (opcional)"
           style={{ ...inputStyle, marginBottom:10 }}
         />
       )}
@@ -154,7 +154,7 @@ export default function AddTipModal({ company, onClose, onSuccess }: Props) {
       {/* Extra field — Service location/url */}
       {seg==='service' && (
         <input value={location} onChange={e=>setLocation(e.target.value)}
-          placeholder="Ubicación o URL del servicio *"
+          placeholder="Ubicación o URL del servicio (opcional)"
           style={{ ...inputStyle, marginBottom:10 }}
         />
       )}
