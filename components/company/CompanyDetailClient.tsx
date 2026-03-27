@@ -90,18 +90,20 @@ export default function CompanyDetailClient({ company: initial, initialTips }: P
               </div>
             )
           })}
-          <div className="live-badge" style={{ marginLeft:'auto' }}>
-            <div className="live-dot"/><span>LIVE</span>
+          <div style={{ marginLeft:'auto', display:'flex', alignItems:'center', gap:8 }}>
+            <div className="live-badge">
+              <div className="live-dot"/><span>LIVE</span>
             </div>
             <button onClick={()=>setQrOpen(true)} style={{
               background:'rgba(255,255,255,0.08)', border:'1px solid rgba(255,255,255,0.12)',
               borderRadius:99, padding:'5px 12px', cursor:'pointer',
               color:'rgba(255,255,255,0.7)', fontSize:11, fontWeight:700, fontFamily:'inherit',
-              display:'inline-flex', alignItems:'center', gap:5, backdropFilter:'blur(8px)',
+              display:'inline-flex', alignItems:'center', gap:5,
             }}>
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><path d="M14 14h3v3h-3zM17 17h3v3h-3zM14 20h3"/></svg>
               QR
-            <div style={{ display:'none' }}
+            </button>
+          </div>
           </div>
         </div>
       </div>
