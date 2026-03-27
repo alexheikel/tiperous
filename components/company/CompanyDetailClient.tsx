@@ -6,6 +6,7 @@ import { useRealtimeTips, useRealtimeCompany } from '@/hooks/useRealtime'
 import AddTipModal from '@/components/tips/AddTipModal'
 import TipCard from '@/components/tips/TipCard'
 import QRModal from '@/components/company/QRModal'
+import { useAuth } from '@/hooks/useAuth'
 
 const SEGS = ['service','product','employee'] as const
 const SEG_ICON  = { service:'⚙', product:'◈', employee:'◎' }
@@ -15,11 +16,16 @@ interface Props { company: Company; initialTips: Tip[] }
 
 export default function CompanyDetailClient({ company: initial, initialTips }: Props) {
   const router = useRouter()
+  const { user, profile } = useAuth()
+  const isBusinessOwner = profile?.is_business && profile?.business_verified
   const [showTip,  setShowTip]  = useState(false)
   const [qrOpen,   setQrOpen]   = useState(false)
   const [filter,   setFilter]   = useState<'all'|'good'|'bad'>('all')
   const [segFilter, setSegFilter] = useState<'all'|'service'|'product'|'employee'>('all')
   const [activeTab, setActiveTab] = useState<'tips'|'employees'|'products'>('tips')
+  const [replyTipId, setReplyTipId] = useState<string|null>(null)
+  const [replyText,  setReplyText]  = useState('')
+  const [replyLoading, setReplyLoading] = useState(false)
 
   const company  = useRealtimeCompany(initial.id) || initial
   const { tips } = useRealtimeTips(initial.id)
@@ -55,6 +61,16 @@ export default function CompanyDetailClient({ company: initial, initialTips }: P
     else productMap[name].bad++
   })
   const products = Object.values(productMap).sort((a,b) => (b.good-b.bad) - (a.good-a.bad))
+
+  async function submitReply(tipId: string) {
+    if (!replyText.trim()) return
+    setReplyLoading(true)
+    await fetch('/api/comments', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ tip_id: tipId, text: replyText.trim() }),
+    })
+    setReplyText(''); setReplyTipId(null); setReplyLoading(false)
+  }
 
   return (
     <div>
@@ -161,14 +177,68 @@ export default function CompanyDetailClient({ company: initial, initialTips }: P
               <div style={{ color:'var(--green)',fontWeight:700,fontSize:11,letterSpacing:1,marginBottom:10 }}>▲ BUENOS ({goodTips.length})</div>
               {filteredTips.filter(t=>t.type==='good').length===0
                 ? <div style={{ color:'var(--muted)',fontSize:13 }}>Sé el primero.</div>
-                : filteredTips.filter(t=>t.type==='good').map((t,i)=><TipCard key={t.id} tip={t} delay={i*20}/>)
+                : filteredTips.filter(t=>t.type==='good').map((t,i)=>(
+                <div key={t.id}>
+                  <TipCard tip={t} delay={i*20}/>
+                  {isBusinessOwner && (
+                    replyTipId===t.id ? (
+                      <div style={{ marginTop:-6, marginBottom:10, background:'rgba(232,52,28,0.06)', borderRadius:'0 0 12px 12px', padding:'10px 12px', border:'1px solid rgba(232,52,28,0.15)', borderTop:'none' }}>
+                        <textarea value={replyText} onChange={e=>setReplyText(e.target.value.slice(0,280))}
+                          placeholder="Respondé como empresa..."
+                          rows={2} style={{ width:'100%', padding:'8px 10px', borderRadius:10, background:'var(--card)', border:'1px solid var(--border2)', color:'var(--text)', fontSize:13, resize:'none', outline:'none', fontFamily:'inherit', marginBottom:8 }}
+                          autoFocus
+                        />
+                        <div style={{ display:'flex', gap:8' }}>
+                          <button onClick={()=>submitReply(t.id)} disabled={replyLoading||!replyText.trim()} style={{ padding:'7px 14px', borderRadius:99, background:'var(--red)', color:'#fff', border:'none', cursor:'pointer', fontFamily:'inherit', fontWeight:700, fontSize:12 }}>
+                            {replyLoading ? '…' : 'Responder ✓'}
+                          </button>
+                          <button onClick={()=>{ setReplyTipId(null); setReplyText('') }} style={{ padding:'7px 12px', borderRadius:99, background:'transparent', border:'1px solid var(--border2)', color:'var(--muted)', cursor:'pointer', fontFamily:'inherit', fontSize:12 }}>
+                            Cancelar
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      <button onClick={()=>setReplyTipId(t.id)} style={{ display:'flex', alignItems:'center', gap:5, marginTop:-6, marginBottom:10, padding:'6px 12px', borderRadius:'0 0 12px 12px', background:'rgba(232,52,28,0.06)', border:'1px solid rgba(232,52,28,0.1)', borderTop:'none', color:'var(--red)', fontFamily:'inherit', fontWeight:600, fontSize:11, cursor:'pointer', width:'100%', justifyContent:'center' }}>
+                        🏢 Responder como empresa
+                      </button>
+                    )
+                  )}
+                </div>
+              ))
               }
             </div>
             <div>
               <div style={{ color:'var(--bad)',fontWeight:700,fontSize:11,letterSpacing:1,marginBottom:10 }}>▼ MALOS ({badTips.length})</div>
               {filteredTips.filter(t=>t.type==='bad').length===0
                 ? <div style={{ color:'var(--muted)',fontSize:13 }}>Sin malos tips.</div>
-                : filteredTips.filter(t=>t.type==='bad').map((t,i)=><TipCard key={t.id} tip={t} delay={i*20}/>)
+                : filteredTips.filter(t=>t.type==='bad').map((t,i)=>(
+                <div key={t.id}>
+                  <TipCard tip={t} delay={i*20}/>
+                  {isBusinessOwner && (
+                    replyTipId===t.id ? (
+                      <div style={{ marginTop:-6, marginBottom:10, background:'rgba(232,52,28,0.06)', borderRadius:'0 0 12px 12px', padding:'10px 12px', border:'1px solid rgba(232,52,28,0.15)', borderTop:'none' }}>
+                        <textarea value={replyText} onChange={e=>setReplyText(e.target.value.slice(0,280))}
+                          placeholder="Respondé como empresa..."
+                          rows={2} style={{ width:'100%', padding:'8px 10px', borderRadius:10, background:'var(--card)', border:'1px solid var(--border2)', color:'var(--text)', fontSize:13, resize:'none', outline:'none', fontFamily:'inherit', marginBottom:8 }}
+                          autoFocus
+                        />
+                        <div style={{ display:'flex', gap:8 }}>
+                          <button onClick={()=>submitReply(t.id)} disabled={replyLoading||!replyText.trim()} style={{ padding:'7px 14px', borderRadius:99, background:'var(--red)', color:'#fff', border:'none', cursor:'pointer', fontFamily:'inherit', fontWeight:700, fontSize:12 }}>
+                            {replyLoading ? '…' : 'Responder ✓'}
+                          </button>
+                          <button onClick={()=>{ setReplyTipId(null); setReplyText('') }} style={{ padding:'7px 12px', borderRadius:99, background:'transparent', border:'1px solid var(--border2)', color:'var(--muted)', cursor:'pointer', fontFamily:'inherit', fontSize:12 }}>
+                            Cancelar
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      <button onClick={()=>setReplyTipId(t.id)} style={{ display:'flex', alignItems:'center', gap:5, marginTop:-6, marginBottom:10, padding:'6px 12px', borderRadius:'0 0 12px 12px', background:'rgba(232,52,28,0.06)', border:'1px solid rgba(232,52,28,0.1)', borderTop:'none', color:'var(--red)', fontFamily:'inherit', fontWeight:600, fontSize:11, cursor:'pointer', width:'100%', justifyContent:'center' }}>
+                        🏢 Responder como empresa
+                      </button>
+                    )
+                  )}
+                </div>
+              ))
               }
             </div>
           </div>
