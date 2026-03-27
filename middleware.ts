@@ -28,7 +28,7 @@ export async function middleware(request: NextRequest) {
   const { data: { user } } = await supabase.auth.getUser()
 
   // Redirect logged out users from / to /landing
-  if (request.nextUrl.pathname === '/' && !user) {
+  if (request.nextUrl.pathname === '/' && !user && !request.nextUrl.searchParams.get('guest')) {
     return NextResponse.redirect(new URL('/landing', request.url))
   }
 

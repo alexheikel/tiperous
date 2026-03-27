@@ -58,9 +58,9 @@ export default function LandingClient({ stats, topCompanies, recentTips }: Props
           >
             ★ Dejar mi primer tip
           </Link>
-          <Link href="/" style={{ padding:'14px 28px',borderRadius:99,background:'rgba(255,255,255,0.06)',color:'rgba(255,255,255,0.7)',textDecoration:'none',fontSize:16,fontWeight:600,border:'1px solid rgba(255,255,255,0.1)' }}>
+          <a href="/?guest=1" style={{ padding:'14px 28px',borderRadius:99,background:'rgba(255,255,255,0.06)',color:'rgba(255,255,255,0.7)',textDecoration:'none',fontSize:16,fontWeight:600,border:'1px solid rgba(255,255,255,0.1)',display:'inline-block' }}>
             Explorar empresas →
-          </Link>
+          </a>
         </div>
 
         {/* 3D Phone mockup */}
