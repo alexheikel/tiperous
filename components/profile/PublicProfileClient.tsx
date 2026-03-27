@@ -51,6 +51,7 @@ export default function PublicProfileClient({ profile, tips, isFollowing: initia
     const res = await fetch('/api/follow', {
       method, headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ target_id: profile.id }),
+      redirect: 'follow',
     })
     const data = await res.json().catch(()=>({}))
     console.log('follow response:', res.status, data)
