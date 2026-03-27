@@ -22,6 +22,7 @@ export default function ExploreClient({ initialCompanies }: Props) {
   const [location,   setLocation]   = useState<LocationState|null>(null)
   const [nearby,     setNearby]     = useState<Company[]>([])
   const [showNearby, setShowNearby] = useState(false)
+  const [category,   setCategory]   = useState('ALL')
   const debounceRef  = useRef<NodeJS.Timeout>()
 
   useEffect(() => {
