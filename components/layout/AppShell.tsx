@@ -105,7 +105,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
               }}>
                 <span style={{ fontSize:14 }}>📍</span>
                 <span style={{ color:detecting?'var(--muted)':'var(--text)', maxWidth:90, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>
-                  {detecting ? 'Detectando…' : location.city}
+                  {detecting ? '...' : location.city.slice(0,3).toUpperCase()}
                 </span>
                 <span style={{ color:'var(--muted)', fontSize:10 }}>▾</span>
               </button>
@@ -160,7 +160,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
                 border:'1px solid rgba(255,255,255,0.1)',
                 backdropFilter:'blur(12px)',
                 color:'var(--muted2)',fontWeight:600,fontSize:12,textDecoration:'none',whiteSpace:'nowrap',
-              }}>Empresas</Link>
+              }}>🏢</Link>
             )}
 
             {user ? (
