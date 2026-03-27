@@ -17,7 +17,7 @@ export async function GET(req: NextRequest) {
   if (nearby === '1' && lat && lng) {
     // Use PostGIS to find nearby companies within 10km
     const { data, error } = await supabase.rpc('companies_nearby', {
-      lat: parseFloat(lat), lng: parseFloat(lng), radius_km: 10
+      lat: parseFloat(lat), lng: parseFloat(lng), radius_km: 50
     })
     if (error) return NextResponse.json({ error:error.message }, { status:500 })
     return NextResponse.json({ data: data || [] })

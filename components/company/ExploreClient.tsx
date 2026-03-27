@@ -139,7 +139,7 @@ export default function ExploreClient({ initialCompanies }: Props) {
       {/* Nearby results */}
       {nearby && coords && (
         <div style={{ marginBottom:24 }}>
-          <div style={{ color:'var(--muted2)', fontWeight:700, fontSize:11, letterSpacing:1, marginBottom:12 }}>📍 EMPRESAS CERCANAS (10km)</div>
+          <div style={{ color:'var(--muted2)', fontWeight:700, fontSize:11, letterSpacing:1, marginBottom:12 }}>📍 CERCANAS</div>
           {nearbyList.length===0
             ? <div style={{ color:'var(--muted)', fontSize:13, padding:'16px 0' }}>No encontramos empresas cerca tuyo todavía.</div>
             : nearbyList.map((c,i)=><CompanyCard key={c.id} company={c} delay={i*25} onClick={()=>handleCompanyClick(c)}/>)
@@ -235,3 +235,4 @@ function ScoreCol({ c, i, color, onClick }: { c:Company; i:number; color:string;
     </div>
   )
 }
+// Location debug - already handled in the component
