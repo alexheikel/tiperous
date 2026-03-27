@@ -92,22 +92,22 @@ export default function CompanyDetailClient({ company: initial, initialTips }: P
           </div>
         </div>
 
-        {/* Segment pills + LIVE + QR */}
-        <div style={{ display:'flex',gap:8,flexWrap:'wrap',alignItems:'center' }}>
+        {/* Segment pills + LIVE + QR — single line */}
+        <div style={{ display:'flex',gap:6,alignItems:'center',flexWrap:'nowrap',overflow:'hidden' }}>
           {SEGS.map(seg => {
             const v = company[`score_${seg}` as keyof Company] as number
             return (
-              <div key={seg} style={{ display:'flex',alignItems:'center',gap:5,padding:'5px 12px',borderRadius:99,background:v>0?'var(--green-dim)':v<0?'var(--bad-dim)':'rgba(255,255,255,0.04)',border:`1px solid ${v>0?'rgba(29,185,84,0.2)':v<0?'rgba(232,52,28,0.2)':'var(--border)'}` }}>
-                <span style={{ fontSize:11,color:'var(--muted)' }}>{SEG_ICON[seg]}</span>
-                <span style={{ fontSize:12,fontWeight:700,color:v>0?'var(--green)':v<0?'var(--bad)':'var(--muted2)' }}>{v>0?'+':''}{v}</span>
-                <span style={{ fontSize:11,color:'var(--muted)',fontWeight:500 }}>{SEG_LABEL[seg]}</span>
+              <div key={seg} style={{ display:'flex',alignItems:'center',gap:4,padding:'4px 8px',borderRadius:99,flexShrink:1,minWidth:0,background:v>0?'var(--green-dim)':v<0?'var(--bad-dim)':'rgba(255,255,255,0.04)',border:`1px solid ${v>0?'rgba(29,185,84,0.2)':v<0?'rgba(232,52,28,0.2)':'var(--border)'}` }}>
+                <span style={{ fontSize:10,color:'var(--muted)',flexShrink:0 }}>{SEG_ICON[seg]}</span>
+                <span style={{ fontSize:11,fontWeight:700,color:v>0?'var(--green)':v<0?'var(--bad)':'var(--muted2)',flexShrink:0 }}>{v>0?'+':''}{v}</span>
+                <span style={{ fontSize:10,color:'var(--muted)',fontWeight:500,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap' }}>{SEG_LABEL[seg]}</span>
               </div>
             )
           })}
-          <div style={{ marginLeft:'auto',display:'flex',alignItems:'center',gap:8 }}>
+          <div style={{ marginLeft:'auto',display:'flex',alignItems:'center',gap:6,flexShrink:0 }}>
             <div className="live-badge"><div className="live-dot"/><span>LIVE</span></div>
-            <button onClick={()=>setQrOpen(true)} style={{ background:'rgba(255,255,255,0.08)',border:'1px solid rgba(255,255,255,0.12)',borderRadius:99,padding:'5px 12px',cursor:'pointer',color:'rgba(255,255,255,0.7)',fontSize:11,fontWeight:700,fontFamily:'inherit',display:'inline-flex',alignItems:'center',gap:5 }}>
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><path d="M14 14h3v3h-3zM17 17h3v3h-3zM14 20h3"/></svg>
+            <button onClick={()=>setQrOpen(true)} style={{ background:'rgba(255,255,255,0.08)',border:'1px solid rgba(255,255,255,0.12)',borderRadius:99,padding:'4px 10px',cursor:'pointer',color:'rgba(255,255,255,0.7)',fontSize:11,fontWeight:700,fontFamily:'inherit',display:'inline-flex',alignItems:'center',gap:4,flexShrink:0 }}>
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><path d="M14 14h3v3h-3zM17 17h3v3h-3zM14 20h3"/></svg>
               QR
             </button>
           </div>
