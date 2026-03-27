@@ -29,6 +29,13 @@ export default function ProfilePage() {
 
   useEffect(() => {
     if (!user) return
+    fetch('/api/business/claims').then(r=>r.json()).then(d => {
+      setClaimedCompanies(d.data||[])
+    })
+  }, [user])
+
+  useEffect(() => {
+    if (!user) return
     // Fetch countries via tips → companies
     if (profile?.is_business) {
       fetch('/api/business/claims').then(r=>r.json()).then(d => {
