@@ -53,8 +53,12 @@ export default function ExploreClient({ initialCompanies }: Props) {
         setNearby(data.data || [])
         // // setShowNearby(true) - disabled auto - disabled auto
       }
-      // Also load all companies
-      const res2  = await fetch('/api/companies')
+      // Also load companies for this country
+      const url2 = new URL('/api/companies', window.location.origin)
+      if (location?.countryCode && location.countryCode !== 'ALL') {
+        url2.searchParams.set('country', location.countryCode)
+      }
+      const res2  = await fetch(url2)
       const data2 = await res2.json()
       setResults({ local: data2.data || [], google: [] })
     }
