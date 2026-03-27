@@ -30,7 +30,6 @@ export default function TimelinePage() {
   const [followingIds, setFollowingIds] = useState<string[]>([])
 
   useEffect(() => {
-    // Get current user and following list
     fetch('/api/me').then(r=>r.json()).then(d => {
       if (d.user) {
         setCurrentUserId(d.user.id)
@@ -39,7 +38,7 @@ export default function TimelinePage() {
           .then(d => setFollowingIds(d.data?.map((f:any)=>f.following_id)||[]))
       }
     }).catch(()=>{})
-  }, [])
+  }, [followingOnly])
 
   // Cache profiles for level filtering
   useEffect(() => {
