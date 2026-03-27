@@ -10,9 +10,16 @@ export async function GET(req: NextRequest) {
   const nearby  = searchParams.get('nearby')
 
   const supabase = createClient()
-  let query = supabase.from('companies').select('*').order('score_total', { ascending:false }).limit(50)
-
+  const sort = searchParams.get('sort') || 'score'
+  let query = supabase.from('companies').select('*')
+  
   if (country) query = query.eq('country', country)
+  
+  if (sort === 'recent') {
+    query = query.order('updated_at', { ascending:false }).limit(50)
+  } else {
+    query = query.order('score_total', { ascending:false }).limit(50)
+  }
 
   if (nearby === '1' && lat && lng) {
     // Use PostGIS to find nearby companies within 10km
