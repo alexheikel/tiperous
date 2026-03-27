@@ -1,3 +1,4 @@
+import { getUserLevel, VIBE_CONFIG } from '@/lib/levels'
 'use client'
 import { useState } from 'react'
 import Link from 'next/link'
@@ -55,8 +56,9 @@ export default function PublicProfileClient({ profile, tips, isFollowing: initia
             boxShadow:'0 6px 24px rgba(192,57,43,0.4)',
           }}>{initials}</div>
           <div style={{ flex:1 }}>
-            <h1 style={{ fontFamily:'Playfair Display,serif', fontWeight:900, fontSize:22, margin:'0 0 4px' }}>
+            <h1 style={{ fontFamily:'Playfair Display,serif', fontWeight:900, fontSize:22, margin:'0 0 4px', display:'flex', alignItems:'center', gap:8 }}>
               {name}
+              {(() => { const {level} = getUserLevel(profile as any); return <span style={{ fontSize:18 }} title={level.name}>{level.emoji}</span> })()}
             </h1>
             {profile.username && (
               <div style={{ color:'var(--muted)', fontSize:13, marginBottom:4 }}>@{profile.username}</div>
