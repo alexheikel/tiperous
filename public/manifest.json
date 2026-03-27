@@ -1,0 +1,14 @@
+{
+  "name": "Tiperous",
+  "short_name": "Tiperous",
+  "description": "La voz de tu comunidad — tips sobre empresas, productos y empleados",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0c0c0e",
+  "theme_color": "#e8341c",
+  "orientation": "portrait",
+  "icons": [
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}
