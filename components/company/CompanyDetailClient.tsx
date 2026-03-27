@@ -28,7 +28,7 @@ export default function CompanyDetailClient({ company: initial, initialTips }: P
   const [replyLoading, setReplyLoading] = useState(false)
 
   const company  = useRealtimeCompany(initial.id) || initial
-  const isBusinessOwner = profile?.is_business && profile?.business_verified && (claimedIds.includes(company.id) || claimedIds.length === 0)
+  const isBusinessOwner = profile?.is_business && profile?.business_verified && claimedIds.includes(company.id)
   const { tips } = useRealtimeTips(initial.id)
   const allTips  = tips.length > 0 ? tips : initialTips
   const s        = company.score_total
