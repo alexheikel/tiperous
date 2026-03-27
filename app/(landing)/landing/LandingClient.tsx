@@ -43,12 +43,12 @@ export default function LandingClient({ stats, topCompanies, recentTips }: Props
         </div>
 
         <h1 style={{ fontFamily:'Georgia,"Playfair Display",serif',fontWeight:900,fontSize:'clamp(36px,6vw,68px)',lineHeight:1.1,margin:'0 0 20px',letterSpacing:-2 }}>
-          La voz de<br/>
-          <span style={{ color:'#e8341c' }}>tu comunidad</span>
+          Simple app para<br/>
+          <span style={{ color:'#e8341c' }}>TIPEAR</span> una empresa
         </h1>
 
         <p style={{ fontSize:'clamp(16px,2.5vw,20px)',color:'rgba(255,255,255,0.55)',lineHeight:1.7,margin:'0 auto 36px',maxWidth:500 }}>
-          Tips honestos sobre empresas, productos y empleados. Compartí tu experiencia y descubrí qué opina la gente real antes de decidir.
+          Contale a tu comunidad cómo fue el Servicio, Producto o los Empleados de una empresa. Dales un tip.
         </p>
 
         <div style={{ display:'flex',gap:12,justifyContent:'center',flexWrap:'wrap',marginBottom:60 }}>
@@ -61,6 +61,50 @@ export default function LandingClient({ stats, topCompanies, recentTips }: Props
           <Link href="/" style={{ padding:'14px 28px',borderRadius:99,background:'rgba(255,255,255,0.06)',color:'rgba(255,255,255,0.7)',textDecoration:'none',fontSize:16,fontWeight:600,border:'1px solid rgba(255,255,255,0.1)' }}>
             Explorar empresas →
           </Link>
+        </div>
+
+        {/* Phone mockup */}
+        <div style={{ position:'relative', margin:'0 auto 48px', width:220, height:380 }}>
+          {/* Phone frame */}
+          <div style={{ width:220, height:380, borderRadius:36, background:'#1a1a1c', border:'6px solid #2a2a2e', boxShadow:'0 24px 80px rgba(0,0,0,0.5), inset 0 0 0 1px rgba(255,255,255,0.05)', position:'relative', overflow:'hidden' }}>
+            {/* Status bar */}
+            <div style={{ background:'#0c0c0e', padding:'10px 16px 6px', display:'flex', justifyContent:'space-between', alignItems:'center' }}>
+              <span style={{ fontSize:10, color:'rgba(255,255,255,0.6)', fontWeight:600 }}>10:37</span>
+              <div style={{ width:60, height:14, borderRadius:10, background:'#1a1a1c', border:'1px solid rgba(255,255,255,0.1)' }}/>
+              <span style={{ fontSize:10, color:'rgba(255,255,255,0.6)' }}>●●●</span>
+            </div>
+            {/* App header */}
+            <div style={{ background:'#e8341c', padding:'8px 12px', display:'flex', alignItems:'center', justifyContent:'space-between' }}>
+              <span style={{ fontSize:11, fontWeight:800, color:'#fff', fontFamily:'Georgia,serif' }}>★ Tiperous</span>
+              <span style={{ fontSize:10, color:'rgba(255,255,255,0.8)' }}>Explore</span>
+            </div>
+            {/* Mock tips */}
+            {[
+              { name:'La Vienesa', score:'+4', good:true },
+              { name:'Tigo', score:'-3', good:false },
+              { name:'Bayres Pizza', score:'+1', good:true },
+              { name:'Bank of America', score:'-4', good:false },
+            ].map((c,i)=>(
+              <div key={i} style={{ padding:'8px 12px', borderBottom:'1px solid rgba(255,255,255,0.05)', display:'flex', alignItems:'center', gap:8 }}>
+                <div style={{ width:28, height:28, borderRadius:8, background:'linear-gradient(135deg,#c0392b,#8e0000)', display:'flex', alignItems:'center', justifyContent:'center', color:'#fff', fontSize:12, fontWeight:700, flexShrink:0 }}>{c.name[0]}</div>
+                <div style={{ flex:1 }}>
+                  <div style={{ fontSize:11, fontWeight:600, color:'#f0f0f2' }}>{c.name}</div>
+                  <div style={{ fontSize:9, color:'rgba(255,255,255,0.3)' }}>Food · Buenos Aires</div>
+                </div>
+                <span style={{ fontSize:14, fontWeight:800, color:c.good?'#1db954':'#e8341c' }}>{c.score}</span>
+              </div>
+            ))}
+            {/* Bottom nav */}
+            <div style={{ position:'absolute', bottom:0, left:0, right:0, background:'rgba(12,12,14,0.95)', borderTop:'1px solid rgba(255,255,255,0.06)', padding:'8px 0', display:'flex', justifyContent:'space-around', alignItems:'center' }}>
+              <span style={{ fontSize:9, color:'#e8341c', fontWeight:600 }}>Explore</span>
+              <div style={{ width:32, height:32, borderRadius:'50%', background:'#e8341c', display:'flex', alignItems:'center', justifyContent:'center', marginTop:-8, boxShadow:'0 4px 12px rgba(232,52,28,0.5)' }}>
+                <span style={{ color:'#fff', fontSize:14 }}>★</span>
+              </div>
+              <span style={{ fontSize:9, color:'rgba(255,255,255,0.3)', fontWeight:600 }}>Timeline</span>
+            </div>
+          </div>
+          {/* Home button hint */}
+          <div style={{ width:40, height:4, borderRadius:99, background:'rgba(255,255,255,0.15)', margin:'8px auto 0' }}/>
         </div>
 
         {/* Stats */}
@@ -115,7 +159,7 @@ export default function LandingClient({ stats, topCompanies, recentTips }: Props
                       {c.name[0]}
                     </div>
                     <div style={{ flex:1,minWidth:0 }}>
-                      <div style={{ fontWeight:700,fontSize:15,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap' }}>{c.name}</div>
+                      <div style={{ fontWeight:700,fontSize:15,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap',color:'#f0f0f2' }}>{c.name}</div>
                       <div style={{ fontSize:12,color:'rgba(255,255,255,0.4)' }}>{c.category}{c.city&&` · ${c.city}`}</div>
                     </div>
                     <div style={{ fontFamily:'Georgia,serif',fontWeight:900,fontSize:22,color:c.score_total>=0?'#1db954':'#e8341c',flexShrink:0 }}>
