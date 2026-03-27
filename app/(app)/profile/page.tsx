@@ -15,7 +15,8 @@ export default function ProfilePage() {
   const [username,  setUsername]  = useState('')
   const [saving,    setSaving]    = useState(false)
   const [saved,     setSaved]     = useState(false)
-  const [countries, setCountries] = useState<string[]>([])
+  const [countries,  setCountries]  = useState<string[]>([])
+  const [claimedCompanies, setClaimedCompanies] = useState<any[]>([])
   const [showLevels, setShowLevels] = useState(false)
 
   useEffect(() => {
@@ -29,6 +30,12 @@ export default function ProfilePage() {
   useEffect(() => {
     if (!user) return
     // Fetch countries via tips → companies
+    if (profile?.is_business) {
+      fetch('/api/business/claims').then(r=>r.json()).then(d => {
+        setClaimedCompanies(d.data||[])
+      })
+    }
+
     supabase.from('tips').select('company_id').eq('user_id', user.id)
       .then(({ data: tips }) => {
         if (!tips?.length) return
@@ -186,6 +193,23 @@ export default function ProfilePage() {
             <span>😊 Más positivo</span>
           </div>
         </div>
+        {/* Managed companies */}
+        {claimedCompanies.length > 0 && (
+          <div style={{ marginTop:12, padding:'10px 14px', background:'rgba(232,52,28,0.06)', borderRadius:12, border:'1px solid rgba(232,52,28,0.15)' }}>
+            <div style={{ fontSize:11, color:'var(--muted)', marginBottom:8, fontWeight:700, letterSpacing:1 }}>🏢 EMPRESA QUE MANEJÁS</div>
+            {claimedCompanies.map((claim:any) => (
+              <a key={claim.company_id} href={`/c/${claim.company?.slug}`} style={{ display:'flex', alignItems:'center', gap:8, textDecoration:'none' }}>
+                <div style={{ width:32, height:32, borderRadius:8, background:'linear-gradient(135deg,#c0392b,#8e0000)', display:'flex', alignItems:'center', justifyContent:'center', color:'#fff', fontWeight:700, fontSize:14 }}>
+                  {claim.company?.name?.[0]}
+                </div>
+                <div>
+                  <div style={{ color:'var(--text)', fontWeight:700, fontSize:14 }}>{claim.company?.name}</div>
+                  <div style={{ color:'var(--red)', fontSize:11 }}>Ver perfil de empresa →</div>
+                </div>
+              </a>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* ── Edit form ── */}

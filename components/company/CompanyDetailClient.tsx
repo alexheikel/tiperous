@@ -17,12 +17,13 @@ interface Props { company: Company; initialTips: Tip[] }
 export default function CompanyDetailClient({ company: initial, initialTips }: Props) {
   const router = useRouter()
   const { user, profile } = useAuth()
-  const isBusinessOwner = profile?.is_business && profile?.business_verified
+  const isBusinessOwner = profile?.is_business && profile?.business_verified && (claimedIds.includes(company.id) || claimedIds.length === 0)
   const [showTip,  setShowTip]  = useState(false)
   const [qrOpen,   setQrOpen]   = useState(false)
   const [filter,   setFilter]   = useState<'all'|'good'|'bad'>('all')
   const [segFilter, setSegFilter] = useState<'all'|'service'|'product'|'employee'>('all')
   const [activeTab, setActiveTab] = useState<'tips'|'employees'|'products'>('tips')
+  const [claimedIds,  setClaimedIds]  = useState<string[]>([])
   const [replyTipId, setReplyTipId] = useState<string|null>(null)
   const [replyText,  setReplyText]  = useState('')
   const [replyLoading, setReplyLoading] = useState(false)
@@ -61,6 +62,14 @@ export default function CompanyDetailClient({ company: initial, initialTips }: P
     else productMap[name].bad++
   })
   const products = Object.values(productMap).sort((a,b) => (b.good-b.bad) - (a.good-a.bad))
+
+  // Load claimed companies for this user
+  useState(() => {
+    if (!profile?.is_business) return
+    fetch('/api/business/claims').then(r=>r.json()).then(d => {
+      setClaimedIds((d.data||[]).map((c:any) => c.company_id))
+    })
+  })
 
   async function submitReply(tipId: string) {
     if (!replyText.trim()) return
