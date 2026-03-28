@@ -148,18 +148,8 @@ export default function TimelinePage() {
 
       {!loading && visible.length > 0 && (
         <div>
-          {typeFilter!=='bad' && good.length>0 && (
-            <>
-              <div style={{ color:'var(--green)',fontWeight:700,fontSize:11,letterSpacing:1,marginBottom:10 }}>▲ BUENOS ({good.length})</div>
-              {good.map((t,i) => <TipCard key={t.id} tip={t} delay={i*30}/>)}
-            </>
-          )}
-          {typeFilter!=='good' && bad.length>0 && (
-            <>
-              <div style={{ color:'var(--bad)',fontWeight:700,fontSize:11,letterSpacing:1,margin:'16px 0 10px' }}>▼ MALOS ({bad.length})</div>
-              {bad.map((t,i) => <TipCard key={t.id} tip={t} delay={i*30}/>)}
-            </>
-          )}
+          <div style={{ color:'rgba(255,255,255,0.3)',fontWeight:700,fontSize:11,letterSpacing:1,marginBottom:10 }}>{visible.length} tips</div>
+          {visible.map((t,i) => <TipCard key={t.id} tip={t} delay={i*20}/>)}
         </div>
       )}
     </div>
