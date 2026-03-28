@@ -5,7 +5,9 @@ import { createClient } from '@/lib/supabase/server'
 
 async function checkAdmin(supabase: any) {
   const { data: { user } } = await supabase.auth.getUser()
-  return user && ADMIN_IDS.includes(user.id) ? user : null
+  if (!user) return null
+  const { data: ap } = await supabase.from('profiles').select('is_admin').eq('id', user.id).single()
+  return ap?.is_admin ? user : null
 }
 
 export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
