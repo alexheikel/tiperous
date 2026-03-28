@@ -7,8 +7,9 @@ import { createAdminClient } from '@/lib/supabase/server'
 export async function POST(req: NextRequest, { params }: { params: { id: string } }) {
   const supabase = createClient()
   const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return NextResponse.json({ error:'Forbidden' }, { status:403 })
   const { data: ap } = await supabase.from('profiles').select('is_admin').eq('id', user.id).single()
-  if (!user || !ap?.is_admin) return NextResponse.json({ error:'Forbidden' }, { status:403 })
+  if (!ap?.is_admin) return NextResponse.json({ error:'Forbidden' }, { status:403 })
   const admin = createAdminClient()
   const { data: claim } = await admin.from('business_claims').select('profile_id,company_id').eq('id', params.id).single()
   if (claim) {
