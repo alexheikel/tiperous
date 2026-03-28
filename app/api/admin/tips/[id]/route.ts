@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 
-const ADMIN_IDS = ['d9f0b65f-d7ce-4739-b214-61264bee95ed']
+
 
 async function checkAdmin(supabase: any) {
   const { data: { user } } = await supabase.auth.getUser()
