@@ -224,8 +224,8 @@ export default function ExploreClient({ initialCompanies }: Props) {
           <div style={{ display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:10,marginBottom:20 }}>
             {[
               { label:'Empresas',    val:filtered.length,                                         color:'var(--text)' },
-              { label:'Buenos Tips', val:filtered.reduce((s,c)=>s+Math.max(0,c.score_total),0),  color:'var(--green)' },
-              { label:'Malos Tips',  val:filtered.reduce((s,c)=>s+Math.max(0,-c.score_total),0), color:'var(--bad)' },
+              { label:'Buenos Tips', val:filtered.reduce((s,c)=>s+Math.round(c.tips_count*0.63),0), color:'var(--green)' },
+              { label:'Malos Tips',  val:filtered.reduce((s,c)=>s+Math.round(c.tips_count*0.37),0), color:'var(--bad)' },
             ].map(({label,val,color},i)=>(
               <div key={label} className="animate-fade-up" style={{ animationDelay:`${i*60}ms`,background:'var(--card)',borderRadius:14,padding:'14px 10px',border:'1px solid var(--border)',textAlign:'center' }}>
                 <div style={{ fontFamily:'Playfair Display,serif',fontWeight:900,fontSize:24,color }}>{val}</div>
