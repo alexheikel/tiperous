@@ -117,16 +117,7 @@ export default function TipCard({ tip, delay=0, hideCompany=false }: { tip:Tip; 
           <div style={{ color:'var(--muted)', fontSize:9 }}>{ago}</div>
         </div>
         <div style={{ display:'flex', alignItems:'center', gap:6, flexShrink:0 }}>
-          <div style={{
-            display:'flex', alignItems:'center', gap:4, padding:'3px 8px', borderRadius:99,
-            background:good?'var(--green-dim)':'var(--bad-dim)',
-            border:`1px solid ${good?'rgba(29,185,84,0.2)':'rgba(232,52,28,0.2)'}`,
-          }}>
-            <span style={{ fontSize:9 }}>{SEG_ICON[tip.segment]}</span>
-            <span style={{ fontSize:9, fontWeight:700, color:good?'var(--green)':'var(--bad)' }}>
-              {SEG_LABEL[tip.segment]}
-            </span>
-          </div>
+
           {!reported ? (
             <button onClick={()=>setShowReport(!showReport)} title="Denunciar" style={{
               background:'none', border:'none', cursor:'pointer',
