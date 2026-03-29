@@ -188,7 +188,7 @@ export default function CompanyDetailClient({ company: initial, initialTips }: P
                 ? <div style={{ color:'var(--muted)',fontSize:13 }}>Sé el primero.</div>
                 : filteredTips.filter(t=>t.type==='good').map((t,i)=>(
                 <div key={t.id}>
-                  <TipCard tip={t} delay={i*20}/>
+                  <TipCard tip={t} delay={i*20} hideCompany={true}/>
                   {isBusinessOwner && (
                     replyTipId===t.id ? (
                       <div style={{ marginTop:-6, marginBottom:10, background:'rgba(232,52,28,0.06)', borderRadius:'0 0 12px 12px', padding:'10px 12px', border:'1px solid rgba(232,52,28,0.15)', borderTop:'none' }}>
@@ -222,7 +222,7 @@ export default function CompanyDetailClient({ company: initial, initialTips }: P
                 ? <div style={{ color:'var(--muted)',fontSize:13 }}>Sin malos tips.</div>
                 : filteredTips.filter(t=>t.type==='bad').map((t,i)=>(
                 <div key={t.id}>
-                  <TipCard tip={t} delay={i*20}/>
+                  <TipCard tip={t} delay={i*20} hideCompany={true}/>
                   {isBusinessOwner && (
                     replyTipId===t.id ? (
                       <div style={{ marginTop:-6, marginBottom:10, background:'rgba(232,52,28,0.06)', borderRadius:'0 0 12px 12px', padding:'10px 12px', border:'1px solid rgba(232,52,28,0.15)', borderTop:'none' }}>
