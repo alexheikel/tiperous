@@ -23,7 +23,7 @@ interface Comment {
   profile: { full_name:string|null; username:string|null; is_business?:boolean; business_name?:string|null } | null
 }
 
-export default function TipCard({ tip, delay=0 }: { tip:Tip; delay?:number }) {
+export default function TipCard({ tip, delay=0, hideCompany=false }: { tip:Tip; delay?:number; hideCompany?:boolean }) {
   const good    = tip.type === 'good'
   const profile = tip.profile
   const name    = profile?.full_name || profile?.username || 'Anónimo'
