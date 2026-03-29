@@ -82,7 +82,7 @@ export default function ExploreClient({ initialCompanies }: Props) {
     }, 350)
   }, [query, location])
 
-  const filtered = results.local
+  const filtered = results.local.filter(c => category === 'ALL' || c.category === category)
   const sorted   = sortChrono
     ? [...filtered].sort((a,b)=>new Date((b as any).created_at||0).getTime()-new Date((a as any).created_at||0).getTime())
     : [...filtered].sort((a,b)=>b.score_total-a.score_total)
