@@ -166,17 +166,20 @@ export default function TipCard({ tip, delay=0, hideCompany=false }: { tip:Tip; 
       {(tip as any).employee_name   && <div style={{ fontSize:12,color:'var(--muted2)',fontWeight:600,marginBottom:4 }}>◎ {(tip as any).employee_name}</div>}
       {(tip as any).service_location && <div style={{ fontSize:11,color:'var(--muted)',marginBottom:4 }}>📍 {(tip as any).service_location}</div>}
 
-      <p style={{ color:'var(--text)', fontSize:12, lineHeight:1.5, margin:'0 0 6px' }}>{tip.text}</p>
-      {(tip as any).company && (
-        <a href={`/c/${(tip as any).company.slug || (tip as any).company_id}`}
-          onClick={e=>e.stopPropagation()}
-          style={{ display:'inline-flex', alignItems:'center', gap:4, marginBottom:8,
-            textDecoration:'none', color:'var(--muted)', fontSize:11,
-          }}>
-          <span style={{ color:'rgba(255,255,255,0.15)' }}>en</span>
-          <span style={{ color:'var(--red)', fontWeight:600 }}>{(tip as any).company.name}</span>
-        </a>
-      )}
+      <p style={{ color:'var(--text)', fontSize:12, lineHeight:1.5, margin:'0 0 8px' }}>{tip.text}</p>
+      <div style={{ display:'flex', alignItems:'center', gap:6, marginBottom:8, flexWrap:'wrap' }}>
+        <div style={{ display:'inline-flex', alignItems:'center', gap:4, padding:'3px 8px', borderRadius:99, background:good?'var(--green-dim)':'var(--bad-dim)', border:`1px solid ${good?'rgba(29,185,84,0.2)':'rgba(232,52,28,0.2)'}` }}>
+          <span style={{ fontSize:9, fontWeight:700, color:good?'var(--green)':'var(--bad)' }}>{good?'▲':'▼'} {SEG_LABEL[tip.segment]}</span>
+        </div>
+        {(tip as any).company && !hideCompany && (
+          <a href={`/c/${(tip as any).company.slug || (tip as any).company_id}`}
+            onClick={e=>e.stopPropagation()}
+            style={{ display:'inline-flex', alignItems:'center', gap:4, textDecoration:'none', color:'var(--muted)', fontSize:11 }}>
+            <span style={{ color:'rgba(255,255,255,0.15)' }}>en</span>
+            <span style={{ color:'var(--red)', fontWeight:600 }}>{(tip as any).company.name}</span>
+          </a>
+        )}
+      </div>
 
       {/* Actions */}
       <div style={{ display:'flex', alignItems:'center', gap:8 }}>
