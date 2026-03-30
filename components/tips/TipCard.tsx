@@ -254,11 +254,11 @@ export default function TipCard({ tip, delay=0, hideCompany=false }: { tip:Tip; 
           })}
 
           {/* Input */}
-          <div style={{ display:'flex', gap:8, marginTop:8 }}>
+          <div style={{ display:'flex', gap:8, marginTop:8, overflow:'hidden' }}>
             <input value={newComment} onChange={e=>setNewComment(e.target.value.slice(0,280))}
               onKeyDown={e=>{ if(e.key==='Enter'&&!e.shiftKey){ e.preventDefault(); postComment() } }}
               placeholder={user?'Escribí un comentario…':'Ingresá para comentar'}
-              style={{ flex:1,padding:'8px 12px',borderRadius:99,background:'var(--card2)',border:'1px solid var(--border2)',color:'var(--text)',fontSize:12,outline:'none',fontFamily:'inherit' }}
+              style={{ flex:1,padding:'8px 12px',borderRadius:99,background:'var(--card2)',border:'1px solid var(--border2)',color:'var(--text)',fontSize:16,outline:'none',fontFamily:'inherit',minWidth:0 }}
             />
             <button onClick={postComment} disabled={posting||!newComment.trim()} style={{
               width:34, height:34, borderRadius:'50%',
