@@ -1,5 +1,5 @@
 'use client'
-import { useState } from 'react'
+import React, { useState } from 'react'
 
 const LEVELS = [
   { name:'Curioso',   emoji:'👀', color:'#6e6e7a' },
@@ -16,6 +16,7 @@ interface Props {
   pendingClaims: any[]
   recentReports: any[]
   stats: { tips:number; companies:number; users:number; comments:number }
+  userGrowth: any[]
   categoryMap: Record<string,number>
   levelCounts: number[]
   paidCompanies: any[]
@@ -23,7 +24,7 @@ interface Props {
   recentCompanies: any[]
 }
 
-export default function AdminClient({ flaggedTips, pendingClaims, recentReports, stats, categoryMap, levelCounts, paidCompanies, recentUsers, recentCompanies }: Props) {
+export default function AdminClient({ flaggedTips, pendingClaims, recentReports, stats, categoryMap, levelCounts, paidCompanies, recentUsers, recentCompanies, userGrowth }: Props) {
   const [tab, setTab] = useState<'overview'|'flagged'|'claims'|'reports'>('overview')
   const [tips, setTips] = useState(flaggedTips)
   const [claims, setClaims] = useState(pendingClaims)
@@ -58,6 +59,12 @@ export default function AdminClient({ flaggedTips, pendingClaims, recentReports,
             <div style={{ fontSize:11,color:'rgba(255,255,255,0.4)',marginTop:2 }}>{s.label}</div>
           </div>
         ))}
+      </div>
+
+      {/* User Growth Chart */}
+      <div style={{ background:'rgba(255,255,255,0.04)', border:'1px solid rgba(255,255,255,0.08)', borderRadius:16, padding:18, marginBottom:20 }}>
+        <div style={{ fontWeight:700, fontSize:13, marginBottom:16, color:'rgba(255,255,255,0.6)', letterSpacing:.5 }}>USUARIOS NUEVOS — ÚLTIMOS 30 DÍAS</div>
+        <UserGrowthChart data={userGrowth}/>
       </div>
 
       {/* Tabs */}
@@ -256,6 +263,84 @@ function EmptyState({ icon, text }: { icon:string; text:string }) {
     <div style={{ textAlign:'center',padding:'60px 0',color:'rgba(255,255,255,0.3)' }}>
       <div style={{ fontSize:48,marginBottom:12 }}>{icon}</div>
       <div style={{ fontSize:16 }}>{text}</div>
+    </div>
+  )
+}
+
+function UserGrowthChart({ data }: { data: any[] }) {
+  const days = 30
+  const counts: Record<string, number> = {}
+  const cumulative: Record<string, number> = {}
+  
+  // Build daily counts
+  for (let i = days-1; i >= 0; i--) {
+    const d = new Date()
+    d.setDate(d.getDate() - i)
+    const key = d.toISOString().split('T')[0]
+    counts[key] = 0
+  }
+  data.forEach(u => {
+    const key = u.created_at?.split('T')[0]
+    if (key && counts[key] !== undefined) counts[key]++
+  })
+
+  const keys = Object.keys(counts).sort()
+  let cum = 0
+  keys.forEach(k => { cum += counts[k]; cumulative[k] = cum })
+
+  const maxNew = Math.max(...Object.values(counts), 1)
+  const maxCum = Math.max(...Object.values(cumulative), 1)
+  const W = 100 / keys.length
+
+  const [hover, setHover] = React.useState<string|null>(null)
+
+  return (
+    <div style={{ position:'relative' }}>
+      {/* Range selector */}
+      <div style={{ display:'flex', gap:8, marginBottom:16 }}>
+        {['7d','14d','30d'].map(r => (
+          <button key={r} style={{ padding:'4px 12px', borderRadius:99, border:'1px solid rgba(255,255,255,0.1)', background:'rgba(255,255,255,0.06)', color:'rgba(255,255,255,0.5)', fontSize:11, cursor:'pointer', fontFamily:'inherit' }}>{r}</button>
+        ))}
+      </div>
+
+      {/* Chart */}
+      <div style={{ display:'flex', alignItems:'flex-end', gap:2, height:120, position:'relative' }}>
+        {keys.map((k, i) => {
+          const newH = Math.max(2, (counts[k]/maxNew)*100)
+          const isHovered = hover === k
+          return (
+            <div key={k} style={{ flex:1, display:'flex', flexDirection:'column', alignItems:'center', gap:2, cursor:'pointer', position:'relative' }}
+              onMouseEnter={()=>setHover(k)} onMouseLeave={()=>setHover(null)}>
+              {isHovered && (
+                <div style={{ position:'absolute', bottom:'100%', left:'50%', transform:'translateX(-50%)', background:'rgba(20,20,22,0.95)', border:'1px solid rgba(255,255,255,0.1)', borderRadius:8, padding:'6px 10px', fontSize:11, color:'#fff', whiteSpace:'nowrap', zIndex:10, marginBottom:4 }}>
+                  <div style={{ color:'rgba(255,255,255,0.5)', marginBottom:2 }}>{k.slice(5)}</div>
+                  <div style={{ color:'#e8341c', fontWeight:700 }}>+{counts[k]} nuevos</div>
+                  <div style={{ color:'rgba(255,255,255,0.4)' }}>{cumulative[k]} total</div>
+                </div>
+              )}
+              <div style={{ width:'100%', height:`${newH}%`, background: isHovered?'#e8341c':'rgba(232,52,28,0.5)', borderRadius:'3px 3px 0 0', transition:'background .15s' }}/>
+            </div>
+          )
+        })}
+      </div>
+
+      {/* X axis labels */}
+      <div style={{ display:'flex', justifyContent:'space-between', marginTop:6 }}>
+        <span style={{ fontSize:10, color:'rgba(255,255,255,0.3)' }}>{keys[0]?.slice(5)}</span>
+        <span style={{ fontSize:10, color:'rgba(255,255,255,0.3)' }}>{keys[Math.floor(keys.length/2)]?.slice(5)}</span>
+        <span style={{ fontSize:10, color:'rgba(255,255,255,0.3)' }}>{keys[keys.length-1]?.slice(5)}</span>
+      </div>
+
+      {/* Legend */}
+      <div style={{ display:'flex', gap:16, marginTop:12 }}>
+        <div style={{ display:'flex', alignItems:'center', gap:6 }}>
+          <div style={{ width:12, height:12, borderRadius:3, background:'rgba(232,52,28,0.5)' }}/>
+          <span style={{ fontSize:11, color:'rgba(255,255,255,0.4)' }}>Nuevos por día</span>
+        </div>
+        <div style={{ fontSize:11, color:'rgba(255,255,255,0.4)' }}>
+          Total últimos 30d: <strong style={{ color:'#e8341c' }}>{data.length}</strong>
+        </div>
+      </div>
     </div>
   )
 }

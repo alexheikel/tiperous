@@ -30,6 +30,14 @@ export default async function AdminPage() {
   const { count: companyCount } = await supabase.from('companies').select('*', { count:'exact', head:true })
   const { count: userCount }    = await supabase.from('profiles').select('*', { count:'exact', head:true })
   const { count: commentCount } = await supabase.from('comments').select('*', { count:'exact', head:true })
+  
+  // User growth by day (last 30 days)
+  const { data: userGrowth } = await supabase
+    .from('profiles')
+    .select('created_at')
+    .neq('id', 'd9f0b65f-d7ce-4739-b214-61264bee95ed')
+    .gte('created_at', new Date(Date.now() - 30*24*60*60*1000).toISOString())
+    .order('created_at', { ascending: true })
 
   // Category breakdown
   const categoryMap: Record<string, number> = {}
@@ -56,6 +64,7 @@ export default async function AdminPage() {
     pendingClaims={claims||[]}
     recentReports={reports||[]}
     stats={{ tips:tipCount||0, companies:companyCount||0, users:userCount||0, comments:commentCount||0 }}
+    userGrowth={userGrowth||[]}
     categoryMap={categoryMap}
     levelCounts={levelCounts}
     paidCompanies={paidCompanies||[]}
