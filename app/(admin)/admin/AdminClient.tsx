@@ -344,3 +344,127 @@ function UserGrowthChart({ data }: { data: any[] }) {
     </div>
   )
 }
+
+function CompaniesManager() {
+  const [companies, setCompanies] = React.useState<any[]>([])
+  const [loading, setLoading] = React.useState(true)
+  const [editing, setEditing] = React.useState<any>(null)
+  const [toast, setToast] = React.useState('')
+
+  React.useEffect(() => {
+    fetch('/api/companies').then(r=>r.json()).then(d => {
+      setCompanies(d.data||[])
+      setLoading(false)
+    })
+  }, [])
+
+  function showToast(msg: string) { setToast(msg); setTimeout(()=>setToast(''), 2500) }
+
+  async function deleteCompany(id: string) {
+    if (!confirm('Borrar empresa y todos sus tips?')) return
+    await fetch(`/api/admin/companies/${id}`, { method:'DELETE' })
+    setCompanies(prev => prev.filter(c => c.id !== id))
+    showToast('Empresa eliminada')
+  }
+
+  async function saveEdit() {
+    if (!editing) return
+    await fetch(`/api/admin/companies/${editing.id}`, {
+      method:'PATCH',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ name:editing.name, category:editing.category, city:editing.city })
+    })
+    setCompanies(prev => prev.map(c => c.id===editing.id ? {...c, ...editing} : c))
+    setEditing(null)
+    showToast('Empresa actualizada')
+  }
+
+  if (loading) return <div style={{ color:'rgba(255,255,255,0.3)', padding:40, textAlign:'center' }}>Cargando...</div>
+
+  return (
+    <div>
+      {toast && <div style={{ position:'fixed',top:20,right:20,background:'#1db954',color:'#fff',padding:'10px 18px',borderRadius:12,fontWeight:600,fontSize:13,zIndex:999 }}>✓ {toast}</div>}
+      {editing && (
+        <div style={{ background:'rgba(255,255,255,0.06)', border:'1px solid rgba(255,255,255,0.1)', borderRadius:16, padding:20, marginBottom:20 }}>
+          <div style={{ fontWeight:700, marginBottom:12 }}>Editar empresa</div>
+          {[['Nombre','name'],['Categoría','category'],['Ciudad','city']].map(([label,key]) => (
+            <div key={key} style={{ marginBottom:10 }}>
+              <div style={{ fontSize:12, color:'rgba(255,255,255,0.4)', marginBottom:4 }}>{label}</div>
+              <input value={editing[key]||''} onChange={e=>setEditing({...editing,[key]:e.target.value})}
+                style={{ width:'100%', padding:'8px 12px', borderRadius:8, background:'rgba(255,255,255,0.06)', border:'1px solid rgba(255,255,255,0.1)', color:'#fff', fontSize:14, fontFamily:'inherit', outline:'none', boxSizing:'border-box' as any }}/>
+            </div>
+          ))}
+          <div style={{ display:'flex', gap:8, marginTop:12 }}>
+            <button onClick={saveEdit} style={{ padding:'8px 18px', borderRadius:99, background:'#e8341c', color:'#fff', border:'none', cursor:'pointer', fontFamily:'inherit', fontWeight:700 }}>Guardar</button>
+            <button onClick={()=>setEditing(null)} style={{ padding:'8px 16px', borderRadius:99, background:'transparent', border:'1px solid rgba(255,255,255,0.1)', color:'rgba(255,255,255,0.5)', cursor:'pointer', fontFamily:'inherit' }}>Cancelar</button>
+          </div>
+        </div>
+      )}
+      <div style={{ marginBottom:12, color:'rgba(255,255,255,0.4)', fontSize:13 }}>{companies.length} empresas</div>
+      {companies.map(c => (
+        <div key={c.id} style={{ background:'rgba(255,255,255,0.04)', borderRadius:14, padding:'12px 16px', marginBottom:8, border:'1px solid rgba(255,255,255,0.07)', display:'flex', alignItems:'center', gap:12 }}>
+          <div style={{ width:36, height:36, borderRadius:10, background:'linear-gradient(135deg,#c0392b,#8e0000)', display:'flex', alignItems:'center', justifyContent:'center', color:'#fff', fontWeight:700, fontSize:16, flexShrink:0 }}>{c.name[0]}</div>
+          <div style={{ flex:1, minWidth:0 }}>
+            <div style={{ fontWeight:700, fontSize:14, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{c.name}</div>
+            <div style={{ fontSize:12, color:'rgba(255,255,255,0.4)' }}>{c.category} · {c.city} · {c.tips_count||0} tips · score: {c.score_total||0}</div>
+          </div>
+          <div style={{ display:'flex', gap:6, flexShrink:0 }}>
+            <button onClick={()=>setEditing({...c})} style={{ padding:'6px 12px', borderRadius:99, background:'rgba(255,255,255,0.06)', color:'rgba(255,255,255,0.6)', border:'1px solid rgba(255,255,255,0.1)', cursor:'pointer', fontFamily:'inherit', fontSize:12 }}>Editar</button>
+            <button onClick={()=>deleteCompany(c.id)} style={{ padding:'6px 12px', borderRadius:99, background:'rgba(232,52,28,0.12)', color:'#e8341c', border:'1px solid rgba(232,52,28,0.25)', cursor:'pointer', fontFamily:'inherit', fontSize:12 }}>Borrar</button>
+          </div>
+        </div>
+      ))}
+    </div>
+  )
+}
+
+function UsersManager({ recentUsers }: { recentUsers: any[] }) {
+  const [users, setUsers] = React.useState<any[]>([])
+  const [loading, setLoading] = React.useState(true)
+  const [toast, setToast] = React.useState('')
+  const [search, setSearch] = React.useState('')
+
+  React.useEffect(() => {
+    fetch('/api/profiles?all=1').then(r=>r.json()).then(d => {
+      setUsers(d.data||[])
+      setLoading(false)
+    })
+  }, [])
+
+  function showToast(msg: string) { setToast(msg); setTimeout(()=>setToast(''), 2500) }
+
+  async function banUser(id: string, name: string) {
+    if (!confirm(`Bannear a ${name}? Se eliminarán sus acceso.`)) return
+    await fetch(`/api/admin/users/${id}/ban`, { method:'POST' })
+    setUsers(prev => prev.map(u => u.id===id ? {...u, is_banned:true} : u))
+    showToast(`${name} baneado`)
+  }
+
+  const filtered = users.filter(u => 
+    !search || u.username?.toLowerCase().includes(search.toLowerCase()) || u.full_name?.toLowerCase().includes(search.toLowerCase())
+  )
+
+  if (loading) return <div style={{ color:'rgba(255,255,255,0.3)', padding:40, textAlign:'center' }}>Cargando...</div>
+
+  return (
+    <div>
+      {toast && <div style={{ position:'fixed',top:20,right:20,background:'#1db954',color:'#fff',padding:'10px 18px',borderRadius:12,fontWeight:600,fontSize:13,zIndex:999 }}>✓ {toast}</div>}
+      <input value={search} onChange={e=>setSearch(e.target.value)}
+        placeholder="Buscar usuario..."
+        style={{ width:'100%', padding:'10px 14px', borderRadius:10, background:'rgba(255,255,255,0.06)', border:'1px solid rgba(255,255,255,0.1)', color:'#fff', fontSize:16, fontFamily:'inherit', outline:'none', marginBottom:16, boxSizing:'border-box' as any }}/>
+      <div style={{ marginBottom:12, color:'rgba(255,255,255,0.4)', fontSize:13 }}>{filtered.length} usuarios</div>
+      {filtered.slice(0,50).map(u => (
+        <div key={u.id} style={{ background: u.is_banned?'rgba(232,52,28,0.06)':'rgba(255,255,255,0.04)', borderRadius:14, padding:'12px 16px', marginBottom:8, border:`1px solid ${u.is_banned?'rgba(232,52,28,0.2)':'rgba(255,255,255,0.07)'}`, display:'flex', alignItems:'center', gap:12 }}>
+          <div style={{ width:36, height:36, borderRadius:'50%', background:'linear-gradient(135deg,#c0392b,#8e0000)', display:'flex', alignItems:'center', justifyContent:'center', color:'#fff', fontWeight:700, fontSize:14, flexShrink:0 }}>{(u.username||'?')[0].toUpperCase()}</div>
+          <div style={{ flex:1, minWidth:0 }}>
+            <div style={{ fontWeight:700, fontSize:14 }}>@{u.username} {u.is_banned && <span style={{ fontSize:11, color:'#e8341c', marginLeft:6 }}>BANEADO</span>}</div>
+            <div style={{ fontSize:12, color:'rgba(255,255,255,0.4)' }}>{u.full_name} · {u.tips_count||0} tips · {u.followers_count||0} seguidores</div>
+          </div>
+          {!u.is_banned && u.id !== 'd9f0b65f-d7ce-4739-b214-61264bee95ed' && (
+            <button onClick={()=>banUser(u.id, u.username)} style={{ padding:'6px 12px', borderRadius:99, background:'rgba(232,52,28,0.12)', color:'#e8341c', border:'1px solid rgba(232,52,28,0.25)', cursor:'pointer', fontFamily:'inherit', fontSize:12, flexShrink:0 }}>Bannear</button>
+          )}
+        </div>
+      ))}
+    </div>
+  )
+}
