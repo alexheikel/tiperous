@@ -135,7 +135,7 @@ export default function ShareCard({ companyName, companyScore, tipType, tipSegme
     ctx.fillStyle = '#e8341c'
     ctx.fillRect(0, H - 7, W, 7)
 
-    setImgUrl(canvas.toDataURL('image/png'))
+    setImgUrl(canvas.toDataURL('image/jpeg', 0.92))
   }, [])
 
   const tipUrl   = `https://tipero.us/t/${(typeof window !== 'undefined' ? window.location.pathname.split('/').pop() : '') || ''}`
@@ -155,7 +155,7 @@ export default function ShareCard({ companyName, companyScore, tipType, tipSegme
   function downloadImage() {
     if (!imgUrl) return
     const a = document.createElement('a')
-    a.href = imgUrl; a.download = `tiperous-${companyName.toLowerCase().replace(/\s+/g,'-')}.png`; a.click()
+    a.href = imgUrl; a.download = `tiperous-${companyName.toLowerCase().replace(/\s+/g,'-')}.jpg`; a.click()
   }
 
   return (
