@@ -73,7 +73,9 @@ export default function AdminClient({ flaggedTips, pendingClaims, recentReports,
           { id:'overview', label:'Overview', count:0 },
           { id:'flagged',  label:'Flagged',  count:tips.length,   color:'#e8341c' },
           { id:'claims',   label:'Claims',   count:claims.length, color:'#e8b84b' },
-          { id:'reports',  label:'Reports',  count:recentReports.length, color:'#7c9ab5' },
+          { id:'reports',   label:'Reports',  count:recentReports.length, color:'#7c9ab5' },
+          { id:'companies',  label:'Empresas',  count:0 },
+          { id:'users',      label:'Usuarios',  count:0 },
         ].map(t=>(
           <button key={t.id} onClick={()=>setTab(t.id as any)} style={{ flex:1,padding:'9px 0',borderRadius:9,border:'none',cursor:'pointer',fontFamily:'inherit',fontWeight:600,fontSize:12,transition:'all .15s',background:tab===t.id?'rgba(255,255,255,0.08)':'transparent',color:tab===t.id?'#fff':'rgba(255,255,255,0.4)',display:'flex',alignItems:'center',justifyContent:'center',gap:5 }}>
             {t.label}
@@ -235,10 +237,7 @@ export default function AdminClient({ flaggedTips, pendingClaims, recentReports,
         </div>
       )}
 
-      {/* COMPANIES */}
       {tab==='companies' && <CompaniesManager/>}
-
-      {/* USERS */}
       {tab==='users' && <UsersManager recentUsers={recentUsers}/>}
 
       {/* REPORTS */}
