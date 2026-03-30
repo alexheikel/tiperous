@@ -25,7 +25,7 @@ interface Props {
 }
 
 export default function AdminClient({ flaggedTips, pendingClaims, recentReports, stats, categoryMap, levelCounts, paidCompanies, recentUsers, recentCompanies, userGrowth }: Props) {
-  const [tab, setTab] = useState<'overview'|'flagged'|'claims'|'reports'>('overview')
+  const [tab, setTab] = useState<'overview'|'flagged'|'claims'|'reports'|'companies'|'users'>('overview')
   const [tips, setTips] = useState(flaggedTips)
   const [claims, setClaims] = useState(pendingClaims)
   const [toast, setToast] = useState('')
@@ -234,6 +234,12 @@ export default function AdminClient({ flaggedTips, pendingClaims, recentReports,
           ))}
         </div>
       )}
+
+      {/* COMPANIES */}
+      {tab==='companies' && <CompaniesManager/>}
+
+      {/* USERS */}
+      {tab==='users' && <UsersManager recentUsers={recentUsers}/>}
 
       {/* REPORTS */}
       {tab==='reports' && (
