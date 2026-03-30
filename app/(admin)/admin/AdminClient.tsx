@@ -25,7 +25,7 @@ interface Props {
 }
 
 export default function AdminClient({ flaggedTips, pendingClaims, recentReports, stats, categoryMap, levelCounts, paidCompanies, recentUsers, recentCompanies, userGrowth }: Props) {
-  const [tab, setTab] = useState<'overview'|'flagged'|'claims'|'reports'|'companies'|'users'>('overview')
+  const [tab, setTab] = useState<'overview'|'flagged'|'claims'|'reports'|'companies'|'users'|'tips'>('overview')
   const [tips, setTips] = useState(flaggedTips)
   const [claims, setClaims] = useState(pendingClaims)
   const [toast, setToast] = useState('')
@@ -76,6 +76,7 @@ export default function AdminClient({ flaggedTips, pendingClaims, recentReports,
           { id:'reports',   label:'Reports',  count:recentReports.length, color:'#7c9ab5' },
           { id:'companies',  label:'Empresas',  count:0 },
           { id:'users',      label:'Usuarios',  count:0 },
+          { id:'tips',       label:'Tips',      count:0 },
         ].map(t=>(
           <button key={t.id} onClick={()=>setTab(t.id as any)} style={{ flex:1,padding:'9px 0',borderRadius:9,border:'none',cursor:'pointer',fontFamily:'inherit',fontWeight:600,fontSize:12,transition:'all .15s',background:tab===t.id?'rgba(255,255,255,0.08)':'transparent',color:tab===t.id?'#fff':'rgba(255,255,255,0.4)',display:'flex',alignItems:'center',justifyContent:'center',gap:5 }}>
             {t.label}
@@ -238,6 +239,7 @@ export default function AdminClient({ flaggedTips, pendingClaims, recentReports,
       )}
 
       {tab==='companies' && <CompaniesManager/>}
+      {tab==='tips' && <TipsManager/>}
       {tab==='users' && <UsersManager recentUsers={recentUsers}/>}
 
       {/* REPORTS */}
@@ -470,6 +472,93 @@ function UsersManager({ recentUsers }: { recentUsers: any[] }) {
           )}
         </div>
       ))}
+    </div>
+  )
+}
+
+function TipsManager() {
+  const [tips, setTips] = React.useState<any[]>([])
+  const [loading, setLoading] = React.useState(true)
+  const [search, setSearch] = React.useState('')
+  const [typeFilter, setTypeFilter] = React.useState('all')
+  const [toast, setToast] = React.useState('')
+
+  React.useEffect(() => {
+    fetch('/api/tips?limit=200').then(r=>r.json()).then(d => {
+      setTips(d.data||[])
+      setLoading(false)
+    })
+  }, [])
+
+  function showToast(msg: string) { setToast(msg); setTimeout(()=>setToast(''), 2500) }
+
+  async function deleteTip(id: string) {
+    if (!confirm('Eliminar este tip?')) return
+    await fetch(`/api/admin/tips/${id}`, { method:'DELETE' })
+    setTips(prev => prev.filter(t => t.id !== id))
+    showToast('Tip eliminado')
+  }
+
+  async function unflagTip(id: string) {
+    await fetch(`/api/admin/tips/${id}/unflag`, { method:'POST' })
+    setTips(prev => prev.map(t => t.id===id ? {...t, flagged:false, reports_count:0} : t))
+    showToast('Tip restaurado')
+  }
+
+  const filtered = tips.filter(t => {
+    if (typeFilter === 'good' && t.type !== 'good') return false
+    if (typeFilter === 'bad' && t.type !== 'bad') return false
+    if (typeFilter === 'flagged' && !t.flagged) return false
+    if (search && !t.text?.toLowerCase().includes(search.toLowerCase()) &&
+        !(t.company as any)?.name?.toLowerCase().includes(search.toLowerCase())) return false
+    return true
+  })
+
+  if (loading) return <div style={{ color:'rgba(255,255,255,0.3)', padding:40, textAlign:'center' }}>Cargando...</div>
+
+  return (
+    <div>
+      {toast && <div style={{ position:'fixed',top:20,right:20,background:'#1db954',color:'#fff',padding:'10px 18px',borderRadius:12,fontWeight:600,fontSize:13,zIndex:999 }}>✓ {toast}</div>}
+
+      <input value={search} onChange={e=>setSearch(e.target.value)}
+        placeholder="Buscar por texto o empresa..."
+        style={{ width:'100%', padding:'10px 14px', borderRadius:10, background:'rgba(255,255,255,0.06)', border:'1px solid rgba(255,255,255,0.1)', color:'#fff', fontSize:16, fontFamily:'inherit', outline:'none', marginBottom:12, boxSizing:'border-box' as any }}/>
+
+      <div style={{ display:'flex', gap:6, marginBottom:16 }}>
+        {[['all','Todos'],['good','Buenos'],['bad','Malos'],['flagged','Flaggeados']].map(([val,label]) => (
+          <button key={val} onClick={()=>setTypeFilter(val)} style={{ padding:'6px 14px', borderRadius:99, border:'none', cursor:'pointer', fontFamily:'inherit', fontWeight:600, fontSize:12, background:typeFilter===val?'#e8341c':'rgba(255,255,255,0.06)', color:typeFilter===val?'#fff':'rgba(255,255,255,0.4)' }}>
+            {label}
+          </button>
+        ))}
+      </div>
+
+      <div style={{ marginBottom:12, color:'rgba(255,255,255,0.4)', fontSize:13 }}>{filtered.length} tips</div>
+
+      {filtered.slice(0,100).map(t => {
+        const good = t.type === 'good'
+        const company = (t.company as any)
+        return (
+          <div key={t.id} style={{ background:'rgba(255,255,255,0.04)', borderRadius:14, padding:'12px 16px', marginBottom:8, border:`1px solid ${t.flagged?'rgba(232,52,28,0.25)':'rgba(255,255,255,0.07)'}`, display:'flex', gap:12, alignItems:'flex-start' }}>
+            <div style={{ width:8, height:8, borderRadius:'50%', background:good?'#1db954':'#e8341c', marginTop:5, flexShrink:0 }}/>
+            <div style={{ flex:1, minWidth:0 }}>
+              <div style={{ display:'flex', justifyContent:'space-between', marginBottom:4 }}>
+                <span style={{ fontSize:12, color:'rgba(255,255,255,0.4)' }}>
+                  {company?.name} · {t.segment}
+                  {t.flagged && <span style={{ marginLeft:8, color:'#e8341c', fontWeight:700 }}>🚩 FLAGGED</span>}
+                </span>
+                <span style={{ fontSize:11, color:'rgba(255,255,255,0.3)' }}>{new Date(t.created_at).toLocaleDateString('es')}</span>
+              </div>
+              <div style={{ fontSize:13, color:'rgba(255,255,255,0.8)', marginBottom:6 }}>{t.text}</div>
+            </div>
+            <div style={{ display:'flex', gap:6, flexShrink:0 }}>
+              {t.flagged && (
+                <button onClick={()=>unflagTip(t.id)} style={{ padding:'5px 10px', borderRadius:99, background:'rgba(29,185,84,0.12)', color:'#1db954', border:'1px solid rgba(29,185,84,0.25)', cursor:'pointer', fontFamily:'inherit', fontSize:11 }}>Restaurar</button>
+              )}
+              <button onClick={()=>deleteTip(t.id)} style={{ padding:'5px 10px', borderRadius:99, background:'rgba(232,52,28,0.12)', color:'#e8341c', border:'1px solid rgba(232,52,28,0.25)', cursor:'pointer', fontFamily:'inherit', fontSize:11 }}>Borrar</button>
+            </div>
+          </div>
+        )
+      })}
     </div>
   )
 }
